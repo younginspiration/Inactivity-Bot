@@ -58,35 +58,35 @@ class ActivityBot:
     
     # Message templates
     WARNING_MESSAGE = (
-        "Hello {{BASEPAGENAME}}! This is an automated message to inform you that you have not made any edits "
-        "or log actions in the past {days_inactive} days. According to the [[TW:IP|inactivity policy]], "
-        "user rights may be removed after 90 days of inactivity. If you wish to retain your user rights, "
-        "please make an edit or log action within the next {days_remaining} days. Thank you! ~~~~"
-    )
-    
-    RIGHTS_REMOVAL_MESSAGE = (
-        "Hello {{BASEPAGENAME}}! This is an automated message to inform you that due to {days_inactive} days of inactivity, "
-        "the following user rights have been removed from your account: {rights_removed} "
-        "According to the [[TW:IP|inactivity policy]], user rights are removed after 3 months of inactivity. "
-        "If you wish to regain these rights, please request it at [[Test_Wiki:Request_for_permissions|Request for permissions]]. Thank you for your understanding! ~~~~"
-    )
-    
-    # New specialized message templates
-    INTERFACE_ADMIN_REMOVAL_MESSAGE = (
-        "Hello {{BASEPAGENAME}}! This is an automated message to inform you that due to {days_inactive} days without making any edits "
-        "to the MediaWiki namespace or CSS/JS files, your interface-admin right has been removed. "
-        "According to the policy, interface-admin rights require activity in these specific areas at least once every 30 days. "
-        "If you wish to regain this right, please request it at [[Test_Wiki:Request_for_permissions|Request for permissions]] "
-        "Thank you for your understanding! ~~~~"
-    )
-    
-    ABUSEFILTER_ADMIN_REMOVAL_MESSAGE = (
-        "Hello! This is an automated message to inform you that due to {days_inactive} days without making any edits "
-        "related to abuse filters, your AbuseFilter Administrator right has been removed. "
-        "According to the policy, AbuseFilter Administrator rights require activity in the abuse filter area at least once every 3 months. "
-        "If you wish to regain this right, please request it at [[Test_Wiki:Request_for_permissions|Request for permissions]] "
-        "Thank you for your understanding! ~~~~"
-    )
+    "Hello {username}! This is an automated message to inform you that you have not made any edits "
+    "or log actions in the past {days_inactive} days. According to the [[TW:IP|inactivity policy]], "
+    "user rights may be removed after 90 days of inactivity. If you wish to retain your user rights, "
+    "please make an edit or log action within the next {days_remaining} days. Thank you! ~~~~"
+)
+
+RIGHTS_REMOVAL_MESSAGE = (
+    "Hello {username}! This is an automated message to inform you that due to {days_inactive} days of inactivity, "
+    "the following user rights have been removed from your account: {rights_removed} "
+    "According to the [[TW:IP|inactivity policy]], user rights are removed after 3 months of inactivity. "
+    "If you wish to regain these rights, please request it at [[Test_Wiki:Request_for_permissions|Request for permissions]]. Thank you for your understanding! ~~~~"
+)
+
+INTERFACE_ADMIN_REMOVAL_MESSAGE = (
+    "Hello {username}! This is an automated message to inform you that due to {days_inactive} days without making any edits "
+    "to the MediaWiki namespace or CSS/JS files, your interface-admin right has been removed. "
+    "According to the policy, interface-admin rights require activity in these specific areas at least once every 30 days. "
+    "If you wish to regain this right, please request it at [[Test_Wiki:Request_for_permissions|Request for permissions]] "
+    "Thank you for your understanding! ~~~~"
+)
+
+ABUSEFILTER_ADMIN_REMOVAL_MESSAGE = (
+    "Hello {username}! This is an automated message to inform you that due to {days_inactive} days without making any edits "
+    "related to abuse filters, your AbuseFilter Administrator right has been removed. "
+    "According to the policy, AbuseFilter Administrator rights require activity in the abuse filter area at least once every 3 months. "
+    "If you wish to regain this right, please request it at [[Test_Wiki:Request_for_permissions|Request for permissions]] "
+    "Thank you for your understanding! ~~~~"
+)
+
     
     def __init__(self):
         # Initialize the bot with session and tokens.
@@ -467,30 +467,34 @@ class ActivityBot:
             logger.error(f"Error getting abuse filter activity for {username}: {e}")
             return "Error", 999
 
+   
     def check_rights_grant_date(self, username: str, right: str) -> Tuple[bool, int]:
-        """
-        Check when a user was granted a specific right
-        Returns (is_new_right, days_since_grant)
-        """
-        params = {
-            "action": "query",
-            "list": "logevents",
-            "letype": "rights",
-            "letitle": f"User:{username}",
-            "lelimit": 50,  # Get enough to find the most recent grant
-            "leprop": "timestamp|details",
-            "format": "json"
-        }
+    """
+    Check when a user was granted a specific right
+    Returns (is_new_right, days_since_grant)
+    """
+    params = {
+        "action": "query",
+        "list": "logevents",
+        "letype": "rights",
+        "letitle": f"User:{username}",
+        "lelimit": 50,  # Get enough to find the most recent grant
+        "leprop": "timestamp|details|params",
+        "format": "json"
+    }
+    
+    try:
+        response = self.session.get(url=self.API_URL, params=params)
+        response.raise_for_status()
+        data = response.json()
+        rights_logs = data.get("query", {}).get("logevents", [])
         
-        try:
-            response = self.session.get(url=self.API_URL, params=params)
-            response.raise_for_status()
-            data = response.json()
-            rights_logs = data.get("query", {}).get("logevents", [])
-            
-            for log in rights_logs:
+        for log in rights_logs:
+            # Some MediaWiki versions store rights in different ways
+            # Check 'params' directly and fallback to 'details'
+            if "params" in log:
                 # Check if this log entry granted the right we're looking for
-                if "params" in log and "add" in log["params"] and right in log["params"]["add"]:
+                if "add" in log["params"] and right in log["params"]["add"]:
                     # Found a log entry where this right was granted
                     grant_date = self._parse_timestamp(log["timestamp"])
                     now = datetime.datetime.now(pytz.UTC)
@@ -502,17 +506,42 @@ class ActivityBot:
                     logger.info(f"User {username} was granted {right} {days_since_grant} days ago.")
                     return is_new_right, days_since_grant
             
-            # If we got here, we didn't find a log entry granting this right
-            logger.info(f"Could not find when {username} was granted {right}.")
-            return False, 999
-            
-        except requests.RequestException as e:
-            logger.error(f"Request error checking rights grant date for {username} ({right}): {e}")
-            return False, 999
-        except Exception as e:
-            logger.error(f"Error checking rights grant date for {username} ({right}): {e}")
-            return False, 999
-    
+            # Try looking in details if direct params didn't work
+            elif "details" in log:
+                # Try to find the right in the details
+                if "add" in log["details"] and right in log["details"]["add"]:
+                    grant_date = self._parse_timestamp(log["timestamp"])
+                    now = datetime.datetime.now(pytz.UTC)
+                    days_since_grant = (now - grant_date).days
+                    
+                    is_new_right = days_since_grant <= self.NEW_RIGHTS_GRACE_PERIOD
+                    logger.info(f"User {username} was granted {right} {days_since_grant} days ago (found in details).")
+                    return is_new_right, days_since_grant
+                
+                # Some versions have a plain text description
+                elif isinstance(log["details"], dict) and "rights" in log["details"]:
+                    if f"+{right}" in log["details"]["rights"]:
+                        grant_date = self._parse_timestamp(log["timestamp"])
+                        now = datetime.datetime.now(pytz.UTC)
+                        days_since_grant = (now - grant_date).days
+                        
+                        is_new_right = days_since_grant <= self.NEW_RIGHTS_GRACE_PERIOD
+                        logger.info(f"User {username} was granted {right} {days_since_grant} days ago (found in rights text).")
+                        return is_new_right, days_since_grant
+        
+        # If we got here, we didn't find a log entry granting this right
+        logger.info(f"Could not find when {username} was granted {right}.")
+        
+        # Return that it's not a new right (conservative approach)
+        return False, 999
+        
+    except requests.RequestException as e:
+        logger.error(f"Request error checking rights grant date for {username} ({right}): {e}")
+        return False, 999
+    except Exception as e:
+        logger.error(f"Error checking rights grant date for {username} ({right}): {e}")
+        return False, 999
+        
     def check_recent_activity(self, username: str) -> bool:
         """
         Check if the user has been active very recently (to avoid removing rights from users
