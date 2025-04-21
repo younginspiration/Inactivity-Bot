@@ -71,8 +71,8 @@ class ActivityBot:
      self.tokens = {}
      self.token_timestamp = {}  # Store when tokens were last refreshed
      self.users_by_group = {}
-     self.warned_users = self._load_json("warned_users.json", {})
-     self.reported_users = self._load_json("reported_users.json", {})
+     self.warned_users = ActivityBot._load_json("warned_users.json", {})
+     self.reported_users = ActivityBot._load_json("reported_users.json", {})
      self.actions_taken = {"warned": [], "removed": [], "flagged": []}
      self.timezone = pytz.UTC  # Use UTC as the standard timezone
      self.today = datetime.datetime.now(self.timezone).strftime("%Y-%m-%d")
