@@ -285,3 +285,4 @@
 2025-04-21 11:02:19,907 - ActivityBot - INFO - No actions to report today
 2025-04-21 11:02:19,907 - ActivityBot - INFO - ActivityBot execution completed
 2025-04-21 11:02:19,907 - ActivityBot - INFO - Summary: Warned 0 users, removed rights from 0 users
+2025-04-21 11:22:48,975 - ActivityBot - CRITICAL - Critical error in ActivityBot: 'ActivityBot' object has no attribute 'run'
