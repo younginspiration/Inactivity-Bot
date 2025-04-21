@@ -39,10 +39,10 @@ class ActivityBot:
     NEW_RIGHTS_GRACE_PERIOD = 7  # days
     
     # User groups to monitor
-    MONITORED_GROUPS = ["sysop", "bureaucrat"]
+    MONITORED_GROUPS = ["sysop", "bureaucrat", "interface-admin", "abusefilter-admin"]
     
     # Rights classifications 
-    BOT_REMOVABLE_RIGHTS = ["sysop", "bureaucrat"]
+    BOT_REMOVABLE_RIGHTS = ["sysop", "bureaucrat", "interface-admin", "abusefilter-admin"]
     
     # Users to exclude from inactivity checks, usually stewards, and bots operated by MediaWiki and Steward
     EXCLUDED_USERS = [
@@ -69,6 +69,23 @@ class ActivityBot:
         "the following user rights have been removed from your account: {rights_removed} "
         "According to the [[TW:IP|inactivity policy]], user rights are removed after 3 months of inactivity. "
         "If you wish to regain these rights, please request it at [[Test_Wiki:Request_for_permissions|Request for permissions]]. Thank you for your understanding! ~~~~"
+    )
+    
+    # New specialized message templates
+    INTERFACE_ADMIN_REMOVAL_MESSAGE = (
+        "Hello {{BASEPAGENAME}}! This is an automated message to inform you that due to {days_inactive} days without making any edits "
+        "to the MediaWiki namespace or CSS/JS files, your interface-admin right has been removed. "
+        "According to the policy, interface-admin rights require activity in these specific areas at least once every 30 days. "
+        "If you wish to regain this right, please request it at [[Test_Wiki:Request_for_permissions|Request for permissions]] "
+        "Thank you for your understanding! ~~~~"
+    )
+    
+    ABUSEFILTER_ADMIN_REMOVAL_MESSAGE = (
+        "Hello! This is an automated message to inform you that due to {days_inactive} days without making any edits "
+        "related to abuse filters, your AbuseFilter Administrator right has been removed. "
+        "According to the policy, AbuseFilter Administrator rights require activity in the abuse filter area at least once every 3 months. "
+        "If you wish to regain this right, please request it at [[Test_Wiki:Request_for_permissions|Request for permissions]] "
+        "Thank you for your understanding! ~~~~"
     )
     
     def __init__(self):
@@ -331,6 +348,170 @@ class ActivityBot:
             logger.error(f"Error getting last activity for {username}: {e}")
             return "Error", 0
 
+    def get_user_interface_activity(self, username: str) -> Tuple[str, int]:
+        """
+        Check a user's interface-related activity (edits to MediaWiki namespace or CSS/JS files)
+        Returns last activity date and days since then
+        """
+        # Check MediaWiki namespace edits
+        params = {
+            "action": "query",
+            "list": "usercontribs",
+            "ucuser": username,
+            "ucnamespace": "8",  # MediaWiki namespace
+            "uclimit": 1,
+            "ucprop": "timestamp",
+            "format": "json"
+        }
+        
+        try:
+            response = self.session.get(url=self.API_URL, params=params)
+            response.raise_for_status()
+            data = response.json()
+            mediawiki_contribs = data.get("query", {}).get("usercontribs", [])
+            
+            # Check CSS/JS edits in user namespace
+            params = {
+                "action": "query",
+                "list": "usercontribs",
+                "ucuser": username,
+                "ucnamespace": "2",  # User namespace
+                "ucprop": "timestamp|title",
+                "uclimit": 100,  # Get more to filter CSS/JS files
+                "format": "json"
+            }
+            
+            response = self.session.get(url=self.API_URL, params=params)
+            response.raise_for_status()
+            data = response.json()
+            
+            # Filter for CSS/JS edits only
+            user_css_js_contribs = []
+            for contrib in data.get("query", {}).get("usercontribs", []):
+                if contrib["title"].lower().endswith(".css") or contrib["title"].lower().endswith(".js"):
+                    user_css_js_contribs.append(contrib)
+            
+            last_timestamp = None
+            
+            # Find the most recent edit across both types
+            if mediawiki_contribs and user_css_js_contribs:
+                mediawiki_date = self._parse_timestamp(mediawiki_contribs[0]["timestamp"])
+                user_css_js_date = self._parse_timestamp(user_css_js_contribs[0]["timestamp"])
+                last_date = max(mediawiki_date, user_css_js_date)
+                last_timestamp = last_date.strftime("%Y-%m-%d %H:%M:%S UTC")
+                last_date_for_calc = last_date
+            elif mediawiki_contribs:
+                last_date = self._parse_timestamp(mediawiki_contribs[0]["timestamp"])
+                last_timestamp = last_date.strftime("%Y-%m-%d %H:%M:%S UTC")
+                last_date_for_calc = last_date
+            elif user_css_js_contribs:
+                last_date = self._parse_timestamp(user_css_js_contribs[0]["timestamp"])
+                last_timestamp = last_date.strftime("%Y-%m-%d %H:%M:%S UTC")
+                last_date_for_calc = last_date
+            else:
+                # No interface activity found
+                return "No interface activity found", 999
+            
+            # Calculate days since last activity
+            now = datetime.datetime.now(pytz.UTC)
+            days_inactive = (now - last_date_for_calc).days
+            
+            return last_timestamp, days_inactive
+            
+        except requests.RequestException as e:
+            logger.error(f"Request error getting interface activity for {username}: {e}")
+            return "Error", 999
+        except Exception as e:
+            logger.error(f"Error getting interface activity for {username}: {e}")
+            return "Error", 999
+
+    def get_user_abusefilter_activity(self, username: str) -> Tuple[str, int]:
+        """
+        Check a user's abuse filter activity using only the log entries
+        Returns last activity date and days since then
+        """
+        # Use Special:Log with type=abusefilter parameter directly
+        params = {
+            "action": "query",
+            "list": "logevents",
+            "letype": "abusefilter",
+            "leuser": username,
+            "lelimit": 1,
+            "leprop": "timestamp",
+            "format": "json"
+        }
+        
+        try:
+            response = self.session.get(url=self.API_URL, params=params)
+            response.raise_for_status()
+            data = response.json()
+            filter_logs = data.get("query", {}).get("logevents", [])
+            
+            if filter_logs:
+                last_date = self._parse_timestamp(filter_logs[0]["timestamp"])
+                last_timestamp = last_date.strftime("%Y-%m-%d %H:%M:%S UTC")
+                
+                # Calculate days since last activity
+                now = datetime.datetime.now(pytz.UTC)
+                days_inactive = (now - last_date).days
+                
+                return last_timestamp, days_inactive
+            else:
+                # No abuse filter activity found
+                return "No abuse filter activity found", 999
+                
+        except requests.RequestException as e:
+            logger.error(f"Request error getting abuse filter activity for {username}: {e}")
+            return "Error", 999
+        except Exception as e:
+            logger.error(f"Error getting abuse filter activity for {username}: {e}")
+            return "Error", 999
+
+    def check_rights_grant_date(self, username: str, right: str) -> Tuple[bool, int]:
+        """
+        Check when a user was granted a specific right
+        Returns (is_new_right, days_since_grant)
+        """
+        params = {
+            "action": "query",
+            "list": "logevents",
+            "letype": "rights",
+            "letitle": f"User:{username}",
+            "lelimit": 50,  # Get enough to find the most recent grant
+            "leprop": "timestamp|details",
+            "format": "json"
+        }
+        
+        try:
+            response = self.session.get(url=self.API_URL, params=params)
+            response.raise_for_status()
+            data = response.json()
+            rights_logs = data.get("query", {}).get("logevents", [])
+            
+            for log in rights_logs:
+                # Check if this log entry granted the right we're looking for
+                if "params" in log and "add" in log["params"] and right in log["params"]["add"]:
+                    # Found a log entry where this right was granted
+                    grant_date = self._parse_timestamp(log["timestamp"])
+                    now = datetime.datetime.now(pytz.UTC)
+                    days_since_grant = (now - grant_date).days
+                    
+                    # Check if this is within the grace period
+                    is_new_right = days_since_grant <= self.NEW_RIGHTS_GRACE_PERIOD
+                    
+                    logger.info(f"User {username} was granted {right} {days_since_grant} days ago.")
+                    return is_new_right, days_since_grant
+            
+            # If we got here, we didn't find a log entry granting this right
+            logger.info(f"Could not find when {username} was granted {right}.")
+            return False, 999
+            
+        except requests.RequestException as e:
+            logger.error(f"Request error checking rights grant date for {username} ({right}): {e}")
+            return False, 999
+        except Exception as e:
+            logger.error(f"Error checking rights grant date for {username} ({right}): {e}")
+            return False, 999
     
     def check_recent_activity(self, username: str) -> bool:
         """
@@ -462,7 +643,49 @@ class ActivityBot:
         
         # Get general last activity
         last_activity_date, days_inactive = self.get_user_last_activity(username)
+        
+        # Check Interface Admin activity if applicable
+        if "interface-admin" in user_groups:
+            # Check if this is a new right (within grace period)
+            is_new_right, days_since_grant = self.check_rights_grant_date(username, "interface-admin")
+            
+            if is_new_right:
+                logger.info(f"Skipping interface-admin check for {username} - right granted {days_since_grant} days ago (within {self.NEW_RIGHTS_GRACE_PERIOD}-day grace period)")
+            else:
+                # Check specific interface activity
+                interface_last_date, interface_days_inactive = self.get_user_interface_activity(username)
                 
+                if interface_days_inactive >= self.INTERFACE_ADMIN_THRESHOLD:
+                    logger.info(f"{username} has no interface activity for {interface_days_inactive} days")
+                    
+                    # Only remove interface-admin right
+                    rights_to_remove.append("interface-admin")
+                    removal_reasons["interface-admin"] = {
+                        "days_inactive": interface_days_inactive,
+                        "last_activity": interface_last_date
+                    }
+        
+        # Check Abuse Filter Admin activity if applicable
+        if "abusefilter-admin" in user_groups:
+            # Check if this is a new right (within grace period)
+            is_new_right, days_since_grant = self.check_rights_grant_date(username, "abusefilter-admin")
+            
+            if is_new_right:
+                logger.info(f"Skipping abusefilter-admin check for {username} - right granted {days_since_grant} days ago (within {self.NEW_RIGHTS_GRACE_PERIOD}-day grace period)")
+            else:
+                # Check specific abuse filter activity
+                filter_last_date, filter_days_inactive = self.get_user_abusefilter_activity(username)
+                
+                if filter_days_inactive >= self.ABUSEFILTER_ADMIN_THRESHOLD:
+                    logger.info(f"{username} has no abuse filter activity for {filter_days_inactive} days")
+                    
+                    # Only remove abusefilter-admin right
+                    rights_to_remove.append("abusefilter-admin")
+                    removal_reasons["abusefilter-admin"] = {
+                        "days_inactive": filter_days_inactive,
+                        "last_activity": filter_last_date
+                    }
+        
         # Standard inactivity check for sysop/bureaucrat rights
         if has_special_rights and days_inactive >= self.RIGHTS_REMOVAL_THRESHOLD:
             logger.info(f"{username} has been inactive for {days_inactive} days, exceeding rights removal threshold")
@@ -479,6 +702,35 @@ class ActivityBot:
         # If rights need to be removed
         if rights_to_remove:
             # Generate rights removal message based on which rights are being removed
+            if "interface-admin" in rights_to_remove and len(rights_to_remove) == 1:
+                # Only interface-admin is being removed
+                message = self.INTERFACE_ADMIN_REMOVAL_MESSAGE.format(
+                    days_inactive=removal_reasons["interface-admin"]["days_inactive"]
+                )
+                if self.remove_user_rights(username, ["interface-admin"]):
+                    if self.send_user_message(username, message):
+                        self.actions_taken["removed"].append({
+                            "user": username,
+                            "days_inactive": removal_reasons["interface-admin"]["days_inactive"],
+                            "removed_rights": ["interface-admin"],
+                            "groups": user_groups,
+                            "last_activity": removal_reasons["interface-admin"]["last_activity"]
+                        })
+            elif "abusefilter-admin" in rights_to_remove and len(rights_to_remove) == 1:
+                # Only abusefilter-admin is being removed
+                message = self.ABUSEFILTER_ADMIN_REMOVAL_MESSAGE.format(
+                    days_inactive=removal_reasons["abusefilter-admin"]["days_inactive"]
+                )
+                if self.remove_user_rights(username, ["abusefilter-admin"]):
+                    if self.send_user_message(username, message):
+                        self.actions_taken["removed"].append({
+                            "user": username,
+                            "days_inactive": removal_reasons["abusefilter-admin"]["days_inactive"],
+                            "removed_rights": ["abusefilter-admin"],
+                            "groups": user_groups,
+                            "last_activity": removal_reasons["abusefilter-admin"]["last_activity"]
+                        })
+            else:
                 # Multiple rights or standard rights removal
                 message = self.RIGHTS_REMOVAL_MESSAGE.format(
                     days_inactive=days_inactive,
@@ -649,7 +901,23 @@ class ActivityBot:
                 content += "|| '''Rights Removed'''\n"
             
             content += "|}\n\n"
-                
+        
+        # Add users flagged for review if any
+        if self.actions_taken["flagged"]:
+            content += "=== Users Flagged for Review ===\n"
+            content += "{| class=\"wikitable sortable\"\n"
+            content += "! User !! Days Inactive !! Groups !! Last Activity Date !! Notes\n"
+            
+            for user_data in self.actions_taken["flagged"]:
+                content += "|-\n"
+                content += f"| [[User:{user_data['user']}|{user_data['user']}]] ([[User talk:{user_data['user']}|talk]]) "
+                content += f"|| {user_data['days_inactive']} "
+                content += f"|| {', '.join(user_data['groups'])} "
+                content += f"|| {user_data['last_activity']} "
+                content += f"|| {user_data.get('notes', '')}\n"
+            
+            content += "|}\n\n"
+        
         # Add summary statistics
         content += "=== Summary Statistics ===\n"
         content += "{| class=\"wikitable\"\n"
@@ -659,7 +927,11 @@ class ActivityBot:
         content += "|-\n"
         content += f"| Users with rights removed || {len(self.actions_taken['removed'])}\n"
         
-        total_actions = len(self.actions_taken["warned"]) + len(self.actions_taken["removed"]) 
+        if self.actions_taken["flagged"]:
+            content += "|-\n"
+            content += f"| Users flagged for review || {len(self.actions_taken['flagged'])}\n"
+        
+        total_actions = len(self.actions_taken["warned"]) + len(self.actions_taken["removed"]) + len(self.actions_taken["flagged"])
         content += "|-\n"
         content += f"| Total actions taken || {total_actions}\n"
         content += "|}\n\n"
