@@ -484,3 +484,11 @@
 2025-04-21 11:40:34,355 - ActivityBot - INFO - No actions to report today
 2025-04-21 11:40:34,355 - ActivityBot - INFO - ActivityBot execution completed
 2025-04-21 11:40:34,355 - ActivityBot - INFO - Summary: Warned 0 users, removed rights from 0 users
+2025-04-21 13:12:27,998 - ActivityBot - INFO - Saved bot state to JSON files
+2025-04-21 13:12:27,998 - ActivityBot - ERROR - Unhandled exception in main execution: 'ActivityBot' object has no attribute 'run'
+2025-04-21 13:12:27,999 - ActivityBot - ERROR - Traceback (most recent call last):
+  File "/home/runner/work/Inactivity-Bot/Inactivity-Bot/InactivityBot.py", line 826, in <module>
+    bot.run()
+    ^^^^^^^
+AttributeError: 'ActivityBot' object has no attribute 'run'
+
