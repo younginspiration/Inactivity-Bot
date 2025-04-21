@@ -467,50 +467,45 @@ class ActivityBot:
             logger.error(f"Error getting abuse filter activity for {username}: {e}")
             return "Error", 999
 
-    def check_rights_grant_date(self, username: str, right: str) -> Tuple[bool, int]:
+    def check_rights_grant_date(self, username: str, right: str) -> Tuple[Optional[str], Optional[str]]:
         """
-        Check when a user was granted a specific right
-        Returns (is_new_right, days_since_grant)
+        Check when a user was granted specific rights.
+        Returns a tuple of (timestamp, granter) or (None, None) if not found
         """
         params = {
             "action": "query",
             "list": "logevents",
             "letype": "rights",
             "letitle": f"User:{username}",
-            "lelimit": 50,  # Get enough to find the most recent grant
-            "leprop": "timestamp|details",
+            "lelimit": 500,  # Get more log entries to ensure we don't miss older grants
+            "leprop": "timestamp|details|user",
             "format": "json"
         }
-        
+
         try:
             response = self.session.get(url=self.API_URL, params=params)
-            response.raise_for_status()
             data = response.json()
-            rights_logs = data.get("query", {}).get("logevents", [])
-            
-            for log in rights_logs:
-                # Check if this log entry granted the right we're looking for
-                if "params" in log and "add" in log["params"] and right in log["params"]["add"]:
-                    # Found a log entry where this right was granted
-                    grant_date = self._parse_timestamp(log["timestamp"])
-                    now = datetime.datetime.now(pytz.UTC)
-                    days_since_grant = (now - grant_date).days
-                    
-                    # Check if this is within the grace period
-                    is_new_right = days_since_grant <= self.NEW_RIGHTS_GRACE_PERIOD
-                    
-                    logger.info(f"User {username} was granted {right} {days_since_grant} days ago.")
-                    return is_new_right, days_since_grant
-            
-            # If we got here, we didn't find a log entry granting this right
-            logger.info(f"Could not find when {username} was granted {right}.")
+
+            if "query" in data and "logevents" in data["query"]:
+                for event in data["query"]["logevents"]:
+                    if "params" in event and "newgroups" in event["params"]:
+                        # Check if this event granted the right we're looking for
+                        old_groups = set(event["params"].get("oldgroups", []))
+                        new_groups = set(event["params"].get("newgroups", []))
+
+                        # If the right was added in this event
+                        if right in new_groups and right not in old_groups:
+                            timestamp = event["timestamp"]
+                            granter = event["user"]
+                            logger.info(
+                                f"Found rights grant for {username}: {right} granted by {granter} on {timestamp}")
+                            return timestamp, granter
+
+            logger.info(f"No rights grant found for {username} for right: {right}")
             return False, 999
-            
-        except requests.RequestException as e:
-            logger.error(f"Request error checking rights grant date for {username} ({right}): {e}")
-            return False, 999
+
         except Exception as e:
-            logger.error(f"Error checking rights grant date for {username} ({right}): {e}")
+            logger.error(f"Error checking rights grant date for {username}: {e}")
             return False, 999
     
     def check_recent_activity(self, username: str) -> bool:
