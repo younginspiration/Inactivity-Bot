@@ -5,7 +5,6 @@ import time
 import logging
 import datetime
 import pytz
-from dotenv import load_dotenv
 from typing import Dict, List, Tuple, Set, Optional, Any, Union
 
 # Configure logging
@@ -19,23 +18,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger('ActivityBot')
 
-# Debug: Print the current working directory
-logger.info(f"Current working directory: {os.getcwd()}")
-
-# Load environment variables
-loaded = load_dotenv()
-logger.info(f"Environment loaded: {loaded}")
-
-# Debug: Check for relevant environment variables
-if 'BOT_USERNAME' in os.environ and 'BOT_PASSWORD' in os.environ:
-    logger.info("Environment variables loaded successfully.")
-else:
-    logger.warning("BOT_USERNAME or BOT_PASSWORD not found in environment variables.")
-
 class ActivityBot:
-    
+
     # Configuration
     API_URL = "https://testwiki.wiki/api.php"
+    
+    # Load credentials from environment variables
     BOT_USERNAME = os.environ.get("BOT_USERNAME")
     BOT_PASSWORD = os.environ.get("BOT_PASSWORD")
 
@@ -49,7 +37,6 @@ class ActivityBot:
     INTERFACE_ADMIN_THRESHOLD = 30  # days
     ABUSEFILTER_ADMIN_THRESHOLD = 90  # days
     NEW_RIGHTS_GRACE_PERIOD = 7  # days
-    ABUSEFILTER_ADMIN_WARNING_THRESHOLD = 75  # Days before warning abuse filter admins
     
     # User groups to monitor
     MONITORED_GROUPS = ["sysop", "bureaucrat", "interface-admin", "abusefilter-admin"]
@@ -60,7 +47,7 @@ class ActivityBot:
     # Users to exclude from inactivity checks, usually stewards, and bots operated by MediaWiki and Steward
     EXCLUDED_USERS = [
         "EPIC", "Dmehus", "Drummingman", "Justarandomamerican", 
-        "MacFan4000", "Abuse filter", "FuzzyBot", "MacFanBot", "DodoBot", "BusMuster",
+        "MacFan4000", "Abuse filter", "FuzzyBot", "MacFanBot",
     ]
     
     # Token management
@@ -100,22 +87,8 @@ class ActivityBot:
         "If you wish to regain this right, please request it at [[Test_Wiki:Request_for_permissions|Request for permissions]] "
         "Thank you for your understanding! ~~~~"
     )
-
-    ABUSEFILTER_ADMIN_WARNING_MESSAGE = (
-        "Hello {{BASEPAGENAME}}! This is an automated message to inform you that"
-        "you have not made any edits to abuse filters in the past"
-        "{days_inactive} days. According to the [[TW:IP|inactivity policy]],"
-        "if you do not make any edits to abuse filters within the next {days_until_removal} days,"
-        "your abusefilter-admin right will be removed."
-        "Thank you for your understanding! ~~~~"
-    )
+    
     def __init__(self):
-        if not self.BOT_USERNAME or not self.BOT_PASSWORD:
-            logger.error("Bot credentials (username/password) are missing. Please check your environment variables.")
-            raise ValueError("Bot credentials are missing.")
-        else:
-            logger.info("Bot credentials loaded successfully.")
-
         # Initialize the bot with session and tokens.
         self.session = requests.Session()
         self.tokens = {}
@@ -126,6 +99,11 @@ class ActivityBot:
         self.actions_taken = {"warned": [], "removed": [], "flagged": []}
         self.timezone = pytz.UTC  # Use UTC as the standard timezone
         self.today = datetime.datetime.now(self.timezone).strftime("%Y-%m-%d")
+        
+        # Check if credentials are available
+        if not self.BOT_USERNAME or not self.BOT_PASSWORD:
+            logger.error("Bot credentials not found in environment variables")
+            raise ValueError("Bot credentials not found in environment variables")
 
     @staticmethod
     def _load_json(filename: str, default: Any) -> Any:
@@ -148,9 +126,6 @@ class ActivityBot:
     
     def login(self) -> bool:
         # Log in to the MediaWiki API.
-        # Add this before the login attempt (temporarily for debugging)
-        print(f"Username being used: {self.BOT_USERNAME}")
-        print(f"Password length: {len(self.BOT_PASSWORD) if self.BOT_PASSWORD else 0}")
         # Get login token
         params = {
             "action": "query",
@@ -492,90 +467,51 @@ class ActivityBot:
             logger.error(f"Error getting abuse filter activity for {username}: {e}")
             return "Error", 999
 
-    def check_rights_grant_date(self, username, right):
+    def check_rights_grant_date(self, username: str, right: str) -> Tuple[bool, int]:
         """
-        Check when a user was granted specific rights.
-        Returns (is_new_right, days_since_grant) tuple.
-
-        Args:
-            username (str): Username to check
-            right (str): Right to check for
-
-        Returns:
-            tuple: (is_new_right, days_since_grant) where is_new_right is bool and
-                   days_since_grant is int or None if not found
+        Check when a user was granted a specific right
+        Returns (is_new_right, days_since_grant)
         """
-        self._ensure_token_fresh('userrights')
         params = {
             "action": "query",
             "list": "logevents",
             "letype": "rights",
             "letitle": f"User:{username}",
+            "lelimit": 50,  # Get enough to find the most recent grant
             "leprop": "timestamp|details",
-            "format": "json",
-            "token": self.tokens['userrights']
+            "format": "json"
         }
-
+        
         try:
-            response = self.session.get(url=self.API_URL, params=params, timeout=30)
+            response = self.session.get(url=self.API_URL, params=params)
             response.raise_for_status()
             data = response.json()
-
-            if 'error' in data:
-                logger.error(f"API error while checking rights for {username}: {data['error']}")
-                return False, None
-
-            log_entries = data.get('query', {}).get('logevents', [])
-            if not log_entries:
-                logger.info(f"No rights log entries found for {username}")
-                return False, None
-
-            for entry in log_entries:
-                params = entry.get('params', {})
-                new_groups = params.get('newgroups', [])
-                old_groups = params.get('oldgroups', [])
-
-                if right in new_groups and right not in old_groups:
-                    timestamp = entry.get('timestamp')
-                    if not timestamp:
-                        continue
-
-                    try:
-                        # Make sure we're working with a datetime object
-                        if isinstance(timestamp, str):
-                            grant_date = self._parse_timestamp(timestamp)
-                        else:
-                            grant_date = timestamp
-
-                        if not isinstance(self.today, datetime.datetime):
-                            # Ensure self.today is also a datetime object
-                            self.today = datetime.datetime.now(datetime.timezone.utc)
-
-                        days_since_grant = (self.today - grant_date).days
-                        logger.info(
-                            f"{username} was granted {right} on {grant_date.strftime('%Y-%m-%d')} "
-                            f"({days_since_grant} days ago)"
-                        )
-                        return days_since_grant <= self.NEW_RIGHTS_GRACE_PERIOD, days_since_grant
-                    except (ValueError, TypeError) as e:
-                        ogger.error(f"Error parsing timestamp for {username}: {str(e)}")
-                        continue
-
-            logger.info(
-                f"Could not find {right} grant in {len(log_entries)} log entries for {username}. "
-                f"Latest entry: {log_entries[0].get('timestamp', 'N/A') if log_entries else 'N/A'}"
-            )
-            return False, None
-
-        except requests.Timeout:
-            logger.error(f"Timeout while checking rights for {username}")
-            return False, None
+            rights_logs = data.get("query", {}).get("logevents", [])
+            
+            for log in rights_logs:
+                # Check if this log entry granted the right we're looking for
+                if "params" in log and "add" in log["params"] and right in log["params"]["add"]:
+                    # Found a log entry where this right was granted
+                    grant_date = self._parse_timestamp(log["timestamp"])
+                    now = datetime.datetime.now(pytz.UTC)
+                    days_since_grant = (now - grant_date).days
+                    
+                    # Check if this is within the grace period
+                    is_new_right = days_since_grant <= self.NEW_RIGHTS_GRACE_PERIOD
+                    
+                    logger.info(f"User {username} was granted {right} {days_since_grant} days ago.")
+                    return is_new_right, days_since_grant
+            
+            # If we got here, we didn't find a log entry granting this right
+            logger.info(f"Could not find when {username} was granted {right}.")
+            return False, 999
+            
         except requests.RequestException as e:
-            logger.error(f"Network error checking rights for {username}: {str(e)}")
-            return False, None
+            logger.error(f"Request error checking rights grant date for {username} ({right}): {e}")
+            return False, 999
         except Exception as e:
-            logger.error(f"Unexpected error checking rights for {username}: {str(e)}")
-            return False, None
+            logger.error(f"Error checking rights grant date for {username} ({right}): {e}")
+            return False, 999
     
     def check_recent_activity(self, username: str) -> bool:
         """
@@ -603,8 +539,7 @@ class ActivityBot:
             "summary": "Automated inactivity notification",
             "text": message,
             "token": self.tokens["csrf"],
-            "format": "json",
-            "bot": "1"
+            "format": "json"
         }
         
         try:
@@ -732,181 +667,148 @@ class ActivityBot:
         
         # Check Abuse Filter Admin activity if applicable
         if "abusefilter-admin" in user_groups:
-            af_timestamp, af_days = self.get_user_abusefilter_activity(username)
-
-
-            # Warning check
-            if af_days >= self.ABUSEFILTER_ADMIN_WARNING_THRESHOLD and af_days < self.ABUSEFILTER_ADMIN_THRESHOLD:
-                if self._should_warn_user(username):
-                    days_until_removal = self.ABUSEFILTER_ADMIN_THRESHOLD - af_days
-                    self.send_user_message(
-                        username,
-                        self.ABUSEFILTER_ADMIN_WARNING_MESSAGE.format(
-                            days_inactive=af_days,
-                            days_until_removal=days_until_removal
-                        )
-                    )
-                    self.warned_users[username] = self.today
-            # Removal check
-            if af_days >= self.ABUSEFILTER_ADMIN_THRESHOLD:
-                if self.remove_user_rights(username, ["abusefilter"]):
-                    self.send_user_message(
-                        username,
-                        self.ABUSEFILTER_ADMIN_REMOVAL_MESSAGE.format(days_inactive=af_days)
-                    )
-        
-        # Check general inactivity for all users
-        if days_inactive >= self.WARNING_THRESHOLD:
-            # Handle warning for approaching inactivity threshold
-            if days_inactive < self.RIGHTS_REMOVAL_THRESHOLD:
-                logger.info(f"{username} is approaching inactivity threshold ({days_inactive} days inactive)")
-                
-                # Check if user was already warned within the cooldown period
-                already_warned = False
-                if username in self.warned_users:
-                    try:
-                        warning_date = datetime.datetime.strptime(self.warned_users[username]["date"], "%Y-%m-%d")
-                        warning_date = pytz.UTC.localize(warning_date)  # Add UTC timezone
-                        now = datetime.datetime.now(pytz.UTC)
-                        days_since_warning = (now - warning_date).days
-                        
-                        if days_since_warning < self.WARNING_COOLDOWN:
-                            already_warned = True
-                            logger.info(f"Skipping warning for {username} as they've already been warned {days_since_warning} days ago (cooldown: {self.WARNING_COOLDOWN} days)")
-                    except ValueError:
-                           # If date parsing fails, assume the user hasn't been warned properly
-                        logger.warning(f"Invalid warning date format for {username}: {self.warned_users[username]['date']}")
-                
-                # Send warning if needed
-                if not already_warned:
-                    days_remaining = self.RIGHTS_REMOVAL_THRESHOLD - days_inactive
-                    warning_message = self.WARNING_MESSAGE.format(
-                        days_inactive=days_inactive,
-                        days_remaining=days_remaining
-                    )
-                    
-                    # Attempt to send the warning message
-                    if self.send_user_message(username, warning_message):
-                        # Only mark as warned if the message was sent successfully
-                        self.warned_users[username] = {
-                            "date": self.today,
-                            "days_inactive": days_inactive
-                        }
-                        self._save_json("warned_users.json", self.warned_users)
-                        self.actions_taken["warned"].append(username)
-                        logger.info(f"Warned {username} about upcoming inactivity removal")
-                    else:
-                        logger.error(f"Failed to send warning message to {username}, not marking as warned")
+            # Check if this is a new right (within grace period)
+            is_new_right, days_since_grant = self.check_rights_grant_date(username, "abusefilter-admin")
             
-            # Handle complete inactivity threshold
-            elif days_inactive >= self.RIGHTS_REMOVAL_THRESHOLD:
-                logger.info(f"{username} has exceeded inactivity threshold ({days_inactive} days inactive)")
-                
-                # Add all applicable user rights to the removal list (if not already added for specific reasons)
-                for right in user_groups:
-                    if right in self.BOT_REMOVABLE_RIGHTS and right not in rights_to_remove:
-                        rights_to_remove.append(right)
-                        removal_reasons[right] = {
-                            "days_inactive": days_inactive,
-                            "last_activity": last_activity_date
-                        }
-        
-        # If there are rights to remove, process them
-        if rights_to_remove:
-            logger.info(f"Rights to remove from {username}: {', '.join(rights_to_remove)}")
-            
-            # Remove the rights
-            if self.remove_user_rights(username, rights_to_remove):
-                # Send appropriate notification messages
-                message_sent = False
-                
-                # Check if we removed interface-admin specifically
-                if "interface-admin" in rights_to_remove and "interface-admin" in removal_reasons:
-                    interface_message = self.INTERFACE_ADMIN_REMOVAL_MESSAGE.format(
-                        days_inactive=removal_reasons["interface-admin"]["days_inactive"]
-                    )
-                    if self.send_user_message(username, interface_message):
-                        message_sent = True
-                        logger.info(f"Sent interface-admin removal message to {username}")
-                    else:
-                        logger.error(f"Failed to send interface-admin removal message to {username}")
-                
-                # Check if we removed abusefilter-admin specifically
-                if "abusefilter-admin" in rights_to_remove and "abusefilter-admin" in removal_reasons:
-                    filter_message = self.ABUSEFILTER_ADMIN_REMOVAL_MESSAGE.format(
-                        days_inactive=removal_reasons["abusefilter-admin"]["days_inactive"]
-                    )
-                    if self.send_user_message(username, filter_message):
-                        message_sent = True
-                        logger.info(f"Sent abusefilter-admin removal message to {username}")
-                    else:
-                        logger.error(f"Failed to send abusefilter-admin removal message to {username}")
-                
-                # Send general rights removal message if no specific messages were sent
-                # or if sysop/bureaucrat rights were removed
-                if not message_sent or has_special_rights:
-                    rights_removed_str = ", ".join(rights_to_remove)
-                    removal_message = self.RIGHTS_REMOVAL_MESSAGE.format(
-                        days_inactive=days_inactive,
-                        rights_removed=rights_removed_str
-                    )
-                    if self.send_user_message(username, removal_message):
-                        logger.info(f"Sent general rights removal message to {username}")
-                    else:
-                        logger.error(f"Failed to send general rights removal message to {username}")
-                
-                # Record the actions
-                self.reported_users[username] = {
-                    "date": self.today,
-                    "days_inactive": days_inactive,
-                    "rights_removed": rights_to_remove
-                }
-                self._save_json("reported_users.json", self.reported_users)
-                self.actions_taken["removed"].append(username)
+            if is_new_right:
+                logger.info(f"Skipping abusefilter-admin check for {username} - right granted {days_since_grant} days ago (within {self.NEW_RIGHTS_GRACE_PERIOD}-day grace period)")
             else:
-                logger.error(f"Failed to remove rights from {username}")
-
-    def cleanup_reported_users(self) -> None:
-        """Clean up old entries in the reported_users dictionary to avoid indefinite growth"""
-        # Remove the strptime conversion since self.today is already a datetime object
-        current_date = pytz.UTC.localize(self.today) if self.today.tzinfo is None else self.today
-
-        users_to_remove = []
-
-        for username, data in self.reported_users.items():
-            try:
-                report_date = datetime.datetime.strptime(data["date"], "%Y-%m-%d")
-                report_date = pytz.UTC.localize(report_date)
-
-                days_since_report = (current_date - report_date).days
-
-                if days_since_report > self.REPORT_RETENTION:
-                    users_to_remove.append(username)
-
-            except (ValueError, KeyError) as e:
-                logger.warning(f"Error processing reported user data for {username}: {e}")
-                # Keep invalid entries to avoid data loss, they can be manually reviewed
-
-        for username in users_to_remove:
-            del self.reported_users[username]
-
-        if users_to_remove:
-            logger.info(f"Cleaned up {len(users_to_remove)} old entries from reported users")
-            self._save_json("reported_users.json", self.reported_users)
-
+                # Check specific abuse filter activity
+                filter_last_date, filter_days_inactive = self.get_user_abusefilter_activity(username)
+                
+                if filter_days_inactive >= self.ABUSEFILTER_ADMIN_THRESHOLD:
+                    logger.info(f"{username} has no abuse filter activity for {filter_days_inactive} days")
+                    
+                    # Only remove abusefilter-admin right
+                    rights_to_remove.append("abusefilter-admin")
+                    removal_reasons["abusefilter-admin"] = {
+                        "days_inactive": filter_days_inactive,
+                        "last_activity": filter_last_date
+                    }
+        
+        # Standard inactivity check for sysop/bureaucrat rights
+        if has_special_rights and days_inactive >= self.RIGHTS_REMOVAL_THRESHOLD:
+            logger.info(f"{username} has been inactive for {days_inactive} days, exceeding rights removal threshold")
+            
+            # Add sysop/bureaucrat to rights to remove
+            for right in user_groups:
+                if right in self.BOT_REMOVABLE_RIGHTS and right not in rights_to_remove:
+                    rights_to_remove.append(right)
+                    removal_reasons[right] = {
+                        "days_inactive": days_inactive,
+                        "last_activity": last_activity_date
+                    }
+        
+        # If rights need to be removed
+        if rights_to_remove:
+            # Generate rights removal message based on which rights are being removed
+            if "interface-admin" in rights_to_remove and len(rights_to_remove) == 1:
+                # Only interface-admin is being removed
+                message = self.INTERFACE_ADMIN_REMOVAL_MESSAGE.format(
+                    days_inactive=removal_reasons["interface-admin"]["days_inactive"]
+                )
+                if self.remove_user_rights(username, ["interface-admin"]):
+                    if self.send_user_message(username, message):
+                        self.actions_taken["removed"].append({
+                            "user": username,
+                            "days_inactive": removal_reasons["interface-admin"]["days_inactive"],
+                            "removed_rights": ["interface-admin"],
+                            "groups": user_groups,
+                            "last_activity": removal_reasons["interface-admin"]["last_activity"]
+                        })
+            elif "abusefilter-admin" in rights_to_remove and len(rights_to_remove) == 1:
+                # Only abusefilter-admin is being removed
+                message = self.ABUSEFILTER_ADMIN_REMOVAL_MESSAGE.format(
+                    days_inactive=removal_reasons["abusefilter-admin"]["days_inactive"]
+                )
+                if self.remove_user_rights(username, ["abusefilter-admin"]):
+                    if self.send_user_message(username, message):
+                        self.actions_taken["removed"].append({
+                            "user": username,
+                            "days_inactive": removal_reasons["abusefilter-admin"]["days_inactive"],
+                            "removed_rights": ["abusefilter-admin"],
+                            "groups": user_groups,
+                            "last_activity": removal_reasons["abusefilter-admin"]["last_activity"]
+                        })
+            else:
+                # Multiple rights or standard rights removal
+                message = self.RIGHTS_REMOVAL_MESSAGE.format(
+                    days_inactive=days_inactive,
+                    rights_removed=", ".join(rights_to_remove)
+                )
+                if self.remove_user_rights(username, rights_to_remove):
+                    if self.send_user_message(username, message):
+                        self.actions_taken["removed"].append({
+                            "user": username,
+                            "days_inactive": days_inactive,
+                            "removed_rights": rights_to_remove,
+                            "groups": user_groups,
+                            "last_activity": last_activity_date
+                        })
+        
+        # Warning check
+        elif has_special_rights and days_inactive >= self.WARNING_THRESHOLD:
+            # Check if the user has already been warned recently
+            warning_record = self.warned_users.get(username, {})
+            last_warning_date = warning_record.get("date", "")
+            
+            # Calculate days since last warning if it exists
+            days_since_warning = 999  # Default to a high number
+            if last_warning_date:
+                try:
+                    last_warning_dt = datetime.datetime.strptime(last_warning_date, "%Y-%m-%d")
+                    last_warning_dt = pytz.UTC.localize(last_warning_dt)
+                    days_since_warning = (datetime.datetime.now(pytz.UTC) - last_warning_dt).days
+                except Exception as e:
+                    logger.error(f"Error parsing last warning date for {username}: {e}")
+            
+            # Send warning if no recent warning has been sent
+            if days_since_warning >= self.WARNING_COOLDOWN:
+                logger.info(f"{username} has been inactive for {days_inactive} days, sending warning")
+                
+                # Calculate days remaining before rights removal
+                days_remaining = self.RIGHTS_REMOVAL_THRESHOLD - days_inactive
+                
+                # Send warning message
+                message = self.WARNING_MESSAGE.format(
+                    days_inactive=days_inactive,
+                    days_remaining=days_remaining
+                )
+                
+                if self.send_user_message(username, message):
+                    # Update warned users record
+                    self.warned_users[username] = {
+                        "date": self.today,
+                        "days_inactive": days_inactive
+                    }
+                    
+                    # Add to actions taken
+                    self.actions_taken["warned"].append({
+                        "user": username,
+                        "days_inactive": days_inactive,
+                        "groups": user_groups,
+                        "last_activity": last_activity_date
+                    })
+    
     def update_activity_report(self) -> bool:
-        """Update the activity report page with the latest user activity information"""
-        # Ensure token is fresh before updating the report
+        """Create or update the wiki page with activity report information"""
         if not self._ensure_token_fresh("csrf"):
             logger.error("Failed to refresh token before updating activity report")
             return False
-            
-        # Get page content to check size before updating
+        
+        # Create report content for today's actions
+        report_content = self._generate_report_content()
+        
+        if not report_content:
+            logger.info("No actions to report today")
+            return True
+        
+        # Get current page content
         params = {
             "action": "query",
             "titles": "Activity/Reports",
             "prop": "revisions",
-            "rvprop": "content|size",
+            "rvprop": "content",
             "rvslots": "main",
             "format": "json"
         }
@@ -916,89 +818,30 @@ class ActivityBot:
             response.raise_for_status()
             data = response.json()
             
-            # Extract page info
-            pages = data.get("query", {}).get("pages", {})
-            page_id = next(iter(pages.keys()), None)
+            page_content = ""
+            for page_id in data.get("query", {}).get("pages", {}):
+                if "revisions" in data["query"]["pages"][page_id]:
+                    page_content = data["query"]["pages"][page_id]["revisions"][0]["slots"]["main"]["*"]
+                    break
             
-            if not page_id or page_id == "-1":  # Page doesn't exist yet
-                current_content = ""
-                current_size = 0
-                logger.info("Activity report page doesn't exist yet, creating it")
-            else:
-                page_data = pages[page_id]
-                revisions = page_data.get("revisions", [])
-                
-                if not revisions:
-                    current_content = ""
-                    current_size = 0
-                else:
-                    current_size = revisions[0].get("size", 0)
-                    current_content = revisions[0].get("slots", {}).get("main", {}).get("*", "")
+            # If page doesn't exist, create it with header
+            if not page_content:
+                page_content = "= Activity Reports =\nThis page contains automatically generated activity reports from the activity monitoring bot. Reports are generated when users are warned about inactivity or have their rights removed due to inactivity. Reports older than 20 days are automatically removed.\n\n"
             
-            # Check if the page is too large and needs rotation
-            if current_size >= self.MAX_PAGE_SIZE:
-                # Archive current report
-                archive_date = datetime.datetime.now(self.timezone).strftime("%Y-%m-%d")
-                archive_title = f"Activity/Archive-{archive_date}"
-                
-                # Create archive
-                params = {
-                    "action": "edit",
-                    "title": archive_title,
-                    "text": current_content,
-                    "summary": "Archiving activity report due to size",
-                    "token": self.tokens["csrf"],
-                    "format": "json",
-                    "bot": "1"
-                }
-                
-                archive_response = self.session.post(url=self.API_URL, data=params)
-                archive_response.raise_for_status()
-                archive_data = archive_response.json()
-                
-                if "error" in archive_data:
-                    logger.error(f"Failed to create archive: {archive_data['error']}")
-                    return False
-                
-                logger.info(f"Created archive at {archive_title}")
-                
-                # Reset current content
-                current_content = (
-                    "== Archived Reports ==\n"
-                    f"* [{archive_date}](Activity/Archive-{archive_date})\n\n"
-                )
+            # Clean up old reports if needed
+            updated_content = self._clean_old_reports(page_content)
             
-            # Generate the report content
-            report_date = datetime.datetime.now(self.timezone).strftime("%Y-%m-%d %H:%M:%S UTC")
+            # Add today's report at the top
+            updated_content = updated_content.split("\n", 2)[0] + "\n" + updated_content.split("\n", 2)[1] + "\n" + report_content + updated_content.split("\n", 2)[2] if len(updated_content.split("\n", 2)) > 2 else updated_content + report_content
             
-            report_content = f"== Activity Report: {report_date} ==\n"
-            
-            # Add warning and removal sections
-            if self.actions_taken["warned"]:
-                report_content += "\n=== Users Warned ===\n"
-                for username in sorted(self.actions_taken["warned"]):
-                    days_inactive = self.warned_users.get(username, {}).get("days_inactive", "unknown")
-                    report_content += f"* [[User:{username}|{username}]] - {days_inactive} days inactive\n"
-            
-            if self.actions_taken["removed"]:
-                report_content += "\n=== Rights Removed ===\n"
-                for username in sorted(self.actions_taken["removed"]):
-                    rights_removed = ", ".join(self.reported_users.get(username, {}).get("rights_removed", []))
-                    days_inactive = self.reported_users.get(username, {}).get("days_inactive", "unknown")
-                    report_content += f"* [[User:{username}|{username}]] - {days_inactive} days inactive - Rights removed: {rights_removed}\n"
-            
-            if not self.actions_taken["warned"] and not self.actions_taken["removed"]:
-                report_content += "\nNo actions taken in this run.\n"
-            
-            # Update the report page
+            # Save the updated page
             params = {
                 "action": "edit",
                 "title": "Activity/Reports",
-                "text": current_content + report_content,
-                "summary": f"Updating activity report for {self.today}",
+                "text": updated_content,
+                "summary": f"Updated activity report for {self.today}",
                 "token": self.tokens["csrf"],
-                "format": "json",
-                "bot": "1"
+                "format": "json"
             }
             
             response = self.session.post(url=self.API_URL, data=params)
@@ -1006,65 +849,186 @@ class ActivityBot:
             data = response.json()
             
             if "error" not in data:
-                logger.info("Successfully updated activity report")
+                logger.info("Successfully updated Activity/Reports page")
                 return True
             else:
-                logger.error(f"API error updating activity report: {data['error']}")
+                logger.error(f"API error updating Activity/Reports: {data['error']}")
                 return False
                 
         except requests.RequestException as e:
-            logger.error(f"Request error updating activity report: {e}")
+            logger.error(f"Request error updating Activity/Reports: {e}")
             return False
         except Exception as e:
-            logger.error(f"Error updating activity report: {e}")
+            logger.error(f"Error updating Activity/Reports: {e}")
             return False
     
-    def run(self) -> bool:
-        """Run the activity bot checks"""
-        logger.info("Starting ActivityBot run")
+    def _generate_report_content(self) -> str:
+        """Generate the content for today's activity report"""
+        if not self.actions_taken["warned"] and not self.actions_taken["removed"] and not self.actions_taken["flagged"]:
+            return ""
+        
+        content = f"== Activity Report: {self.today} ==\n"
+        
+        # Add warned users section if any
+        if self.actions_taken["warned"]:
+            content += "=== Users Warned ===\n"
+            content += "{| class=\"wikitable sortable\"\n"
+            content += "! User !! Days Inactive !! Groups !! Last Activity Date !! Action Taken\n"
+            
+            for user_data in self.actions_taken["warned"]:
+                content += "|-\n"
+                content += f"| [[User:{user_data['user']}|{user_data['user']}]] ([[User talk:{user_data['user']}|talk]]) "
+                content += f"|| {user_data['days_inactive']} "
+                content += f"|| {', '.join(user_data['groups'])} "
+                content += f"|| {user_data['last_activity']} "
+                content += "|| '''Warning Sent'''\n"
+            
+            content += "|}\n\n"
+        
+        # Add users with rights removed section if any
+        if self.actions_taken["removed"]:
+            content += "=== Users with Rights Removed ===\n"
+            content += "{| class=\"wikitable sortable\"\n"
+            content += "! User !! Days Inactive !! Former Groups !! Rights Removed !! Last Activity Date !! Action Taken\n"
+            
+            for user_data in self.actions_taken["removed"]:
+                content += "|-\n"
+                content += f"| [[User:{user_data['user']}|{user_data['user']}]] ([[User talk:{user_data['user']}|talk]]) "
+                content += f"|| {user_data['days_inactive']} "
+                content += f"|| {', '.join(user_data['groups'])} "
+                content += f"|| {', '.join(user_data['removed_rights'])} "
+                content += f"|| {user_data['last_activity']} "
+                content += "|| '''Rights Removed'''\n"
+            
+            content += "|}\n\n"
+        
+        # Add users flagged for review if any
+        if self.actions_taken["flagged"]:
+            content += "=== Users Flagged for Review ===\n"
+            content += "{| class=\"wikitable sortable\"\n"
+            content += "! User !! Days Inactive !! Groups !! Last Activity Date !! Notes\n"
+            
+            for user_data in self.actions_taken["flagged"]:
+                content += "|-\n"
+                content += f"| [[User:{user_data['user']}|{user_data['user']}]] ([[User talk:{user_data['user']}|talk]]) "
+                content += f"|| {user_data['days_inactive']} "
+                content += f"|| {', '.join(user_data['groups'])} "
+                content += f"|| {user_data['last_activity']} "
+                content += f"|| {user_data.get('notes', '')}\n"
+            
+            content += "|}\n\n"
+        
+        # Add summary statistics
+        content += "=== Summary Statistics ===\n"
+        content += "{| class=\"wikitable\"\n"
+        content += "! Metric !! Count\n"
+        content += "|-\n"
+        content += f"| Users warned || {len(self.actions_taken['warned'])}\n"
+        content += "|-\n"
+        content += f"| Users with rights removed || {len(self.actions_taken['removed'])}\n"
+        
+        if self.actions_taken["flagged"]:
+            content += "|-\n"
+            content += f"| Users flagged for review || {len(self.actions_taken['flagged'])}\n"
+        
+        total_actions = len(self.actions_taken["warned"]) + len(self.actions_taken["removed"]) + len(self.actions_taken["flagged"])
+        content += "|-\n"
+        content += f"| Total actions taken || {total_actions}\n"
+        content += "|}\n\n"
+        
+        return content
+    
+    def _clean_old_reports(self, page_content: str) -> str:
+        """Remove reports older than REPORT_RETENTION days from the page content"""
+        today_dt = datetime.datetime.strptime(self.today, "%Y-%m-%d")
+        
+        # Process the page content
+        lines = page_content.split("\n")
+        result_lines = []
+        
+        # Track if we're in an old report section
+        in_old_report = False
+        skip_section = False
+        
+        for line in lines:
+            # Check for report headers
+            if line.startswith("== Activity Report: "):
+                # Extract date from header
+                try:
+                    report_date_str = line.replace("== Activity Report: ", "").replace(" ==", "")
+                    report_date = datetime.datetime.strptime(report_date_str, "%Y-%m-%d")
+                    
+                    # Check if report is older than retention period
+                    days_old = (today_dt - report_date).days
+                    if days_old > self.REPORT_RETENTION:
+                        skip_section = True
+                        in_old_report = True
+                        logger.info(f"Removing old report from {report_date_str} ({days_old} days old)")
+                        continue
+                    else:
+                        skip_section = False
+                except Exception as e:
+                    logger.error(f"Error parsing report date: {e}")
+                    skip_section = False
+            
+            # Check if we're entering a new section after an old report
+            elif in_old_report and line.startswith("== "):
+                in_old_report = False
+                skip_section = False
+            
+            # Add line if not in a section to skip
+            if not skip_section:
+                result_lines.append(line)
+        
+        return "\n".join(result_lines)
+    
+    def save_state(self) -> None:
+        """Save the bot's state to JSON files"""
+        self._save_json("warned_users.json", self.warned_users)
+        self._save_json("reported_users.json", self.reported_users)
+    
+    def run(self) -> None:
+        """Main execution method"""
+        logger.info("Starting ActivityBot execution")
         
         # Login
         if not self.login():
-            logger.error("Login failed, aborting run")
-            return False
+            logger.error("Failed to login, aborting execution")
+            return
         
-        # Get all users in monitored groups
+        # Get users by group
         self.get_users_by_group()
         
         # Process each user in monitored groups
-        all_processed_users = set()
         for group, users in self.users_by_group.items():
             for username in users:
-                if username not in all_processed_users:
-                    # Get all groups the user is in
-                    user_groups = [g for g, users_in_group in self.users_by_group.items() if username in users_in_group]
+                try:
+                    # Get all groups this user belongs to
+                    user_groups = []
+                    for g, users_in_group in self.users_by_group.items():
+                        if username in users_in_group:
+                            user_groups.append(g)
+                    
+                    # Check activity for this user
                     self.check_user_activity(username, user_groups)
-                    all_processed_users.add(username)
+                except Exception as e:
+                    logger.error(f"Error processing user {username}: {e}")
         
-        # Clean up old reported users
-        self.cleanup_reported_users()
-        
-        # Update the activity report
+        # Update activity report
         self.update_activity_report()
         
-        logger.info(f"ActivityBot run completed - warned: {len(self.actions_taken['warned'])}, removed: {len(self.actions_taken['removed'])}")
-        return True
+        # Save state
+        self.save_state()
+        
+        logger.info("ActivityBot execution completed")
+        
+        # Print summary
+        logger.info(f"Summary: Warned {len(self.actions_taken['warned'])} users, removed rights from {len(self.actions_taken['removed'])} users")
 
-
-def main():
-    """Main function to run the bot"""
+# Main execution
+if __name__ == "__main__":
     try:
         bot = ActivityBot()
-        success = bot.run()
-        
-        if success:
-            logger.info("Bot run completed successfully")
-        else:
-            logger.error("Bot run failed")
-            
+        bot.run()
     except Exception as e:
-        logger.critical(f"Unhandled exception in bot run: {e}", exc_info=True)
-
-
-if __name__ == "__main__":
-    main()
+        logger.critical(f"Critical error in ActivityBot: {e}")
