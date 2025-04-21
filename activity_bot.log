@@ -492,3 +492,4 @@
     ^^^^^^^
 AttributeError: 'ActivityBot' object has no attribute 'run'
 
+2025-04-21 13:40:53,637 - ActivityBot - CRITICAL - Critical error in ActivityBot: 'ActivityBot' object has no attribute '_load_json'
