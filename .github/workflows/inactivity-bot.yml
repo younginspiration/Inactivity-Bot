@@ -27,7 +27,7 @@ jobs:
         env:
           BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
           BOT_PASSWORD: ${{ secrets.BOT_PASSWORD }}
-        run: python activity_bot.py
+        run: python InactivityBot.py
         
       - name: Configure Git
         run: |
