@@ -1,4 +1,4 @@
-name: Run Inactivity Bot
+name: Run ActivityBot
 
 on:
   schedule:
