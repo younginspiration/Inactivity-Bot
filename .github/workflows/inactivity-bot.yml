@@ -1,0 +1,53 @@
+name: Run Inactivity Bot
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight UTC
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install requests pytz; fi
+          
+      - name: Run ActivityBot
+        env:
+          BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+          BOT_PASSWORD: ${{ secrets.BOT_PASSWORD }}
+        run: python activity_bot.py
+        
+      - name: Configure Git
+        run: |
+          git config --global user.name "younginspiration"
+          git config --global user.email "theastorpastor@gmail.com"
+          
+      - name: Commit and push changes
+        run: |
+          # Add each file only if it exists
+          for file in warned_users.json reported_users.json activity_bot.log; do
+            if [ -f "$file" ]; then
+              git add "$file"
+              file_changed=true
+            fi
+          done
+          
+          # Only commit if at least one file was changed
+          if [ "$file_changed" = true ]; then
+            git commit -m "Update bot data files [skip ci]" || echo "No changes to commit"
+            git push
+          else
+            echo "No files to commit"
+          fi
