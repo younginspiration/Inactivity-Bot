@@ -60,7 +60,7 @@ class ActivityBot:
     )
     
     RIGHTS_REMOVAL_MESSAGE = (
-        "Hello {{subst:BASEPAGENAME}}! This is an automated message to inform you that due to {days_inactive} days of inactivity, "
+        "Hello {{BASEPAGENAME}}! This is an automated message to inform you that due to {days_inactive} days of inactivity, "
         "the following user rights have been removed from your account: {rights_removed} "
         "According to the [[TW:IP|inactivity policy]], user rights are removed after 3 months of inactivity. "
         "If you wish to regain these rights, please request it at [[Test_Wiki:Request_for_permissions|Request for permissions]]. Thank you for your understanding! ~~~~"
