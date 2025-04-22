@@ -53,7 +53,7 @@ class ActivityBot:
     
     # Message templates
     WARNING_MESSAGE = (
-        "Hello {{subst:BASEPAGENAME}}! This is an automated message to inform you that you have not made any edits "
+        "Hello {{BASEPAGENAME}}! This is an automated message to inform you that you have not made any edits "
         "or log actions in the past {days_inactive} days. According to the [[TW:IP|inactivity policy]], "
         "user rights may be removed after 90 days of inactivity. If you wish to retain your user rights, "
         "please make an edit or log action within the next {days_remaining} days. Thank you! ~~~~"
