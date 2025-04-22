@@ -33,16 +33,11 @@ class ActivityBot:
     WARNING_COOLDOWN = 14  # days
     REPORT_RETENTION = 20  # days
     
-    # New specialized thresholds
-    INTERFACE_ADMIN_THRESHOLD = 30  # days
-    ABUSEFILTER_ADMIN_THRESHOLD = 90  # days
-    NEW_RIGHTS_GRACE_PERIOD = 7  # days
-    
     # User groups to monitor
-    MONITORED_GROUPS = ["sysop", "bureaucrat", "interface-admin", "abusefilter-admin"]
+    MONITORED_GROUPS = ["sysop", "bureaucrat"]
     
     # Rights classifications 
-    BOT_REMOVABLE_RIGHTS = ["sysop", "bureaucrat", "interface-admin", "abusefilter-admin"]
+    BOT_REMOVABLE_RIGHTS = ["sysop", "bureaucrat"]
     
     # Users to exclude from inactivity checks, usually stewards, and bots operated by MediaWiki and Steward
     EXCLUDED_USERS = [
@@ -69,23 +64,6 @@ class ActivityBot:
         "the following user rights have been removed from your account: {rights_removed} "
         "According to the [[TW:IP|inactivity policy]], user rights are removed after 3 months of inactivity. "
         "If you wish to regain these rights, please request it at [[Test_Wiki:Request_for_permissions|Request for permissions]]. Thank you for your understanding! ~~~~"
-    )
-    
-    # New specialized message templates
-    INTERFACE_ADMIN_REMOVAL_MESSAGE = (
-        "Hello {{BASEPAGENAME}}! This is an automated message to inform you that due to {days_inactive} days without making any edits "
-        "to the MediaWiki namespace or CSS/JS files, your interface-admin right has been removed. "
-        "According to the policy, interface-admin rights require activity in these specific areas at least once every 30 days. "
-        "If you wish to regain this right, please request it at [[Test_Wiki:Request_for_permissions|Request for permissions]] "
-        "Thank you for your understanding! ~~~~"
-    )
-    
-    ABUSEFILTER_ADMIN_REMOVAL_MESSAGE = (
-        "Hello! This is an automated message to inform you that due to {days_inactive} days without making any edits "
-        "related to abuse filters, your AbuseFilter Administrator right has been removed. "
-        "According to the policy, AbuseFilter Administrator rights require activity in the abuse filter area at least once every 3 months. "
-        "If you wish to regain this right, please request it at [[Test_Wiki:Request_for_permissions|Request for permissions]] "
-        "Thank you for your understanding! ~~~~"
     )
     
     def __init__(self):
@@ -625,71 +603,29 @@ class ActivityBot:
         except Exception as e:
             logger.error(f"Error removing rights from {username}: {e}")
             return False
-    
+
     def check_user_activity(self, username: str, user_groups: List[str]) -> None:
         # Check a user's activity and take appropriate actions.
         logger.info(f"Checking activity for {username} (groups: {', '.join(user_groups)})")
-        
+
         # Skip excluded users and the bot itself
         if username in self.EXCLUDED_USERS or username == self.BOT_USERNAME.split('@')[0]:
             return
-        
+
         # Track rights to remove and reasons
         rights_to_remove = []
         removal_reasons = {}
-        
+
         # Track if the user has sysop/bureaucrat rights (special rights)
         has_special_rights = "sysop" in user_groups or "bureaucrat" in user_groups
-        
+
         # Get general last activity
         last_activity_date, days_inactive = self.get_user_last_activity(username)
-        
-        # Check Interface Admin activity if applicable
-        if "interface-admin" in user_groups:
-            # Check if this is a new right (within grace period)
-            is_new_right, days_since_grant = self.check_rights_grant_date(username, "interface-admin")
-            
-            if is_new_right:
-                logger.info(f"Skipping interface-admin check for {username} - right granted {days_since_grant} days ago (within {self.NEW_RIGHTS_GRACE_PERIOD}-day grace period)")
-            else:
-                # Check specific interface activity
-                interface_last_date, interface_days_inactive = self.get_user_interface_activity(username)
-                
-                if interface_days_inactive >= self.INTERFACE_ADMIN_THRESHOLD:
-                    logger.info(f"{username} has no interface activity for {interface_days_inactive} days")
-                    
-                    # Only remove interface-admin right
-                    rights_to_remove.append("interface-admin")
-                    removal_reasons["interface-admin"] = {
-                        "days_inactive": interface_days_inactive,
-                        "last_activity": interface_last_date
-                    }
-        
-        # Check Abuse Filter Admin activity if applicable
-        if "abusefilter-admin" in user_groups:
-            # Check if this is a new right (within grace period)
-            is_new_right, days_since_grant = self.check_rights_grant_date(username, "abusefilter-admin")
-            
-            if is_new_right:
-                logger.info(f"Skipping abusefilter-admin check for {username} - right granted {days_since_grant} days ago (within {self.NEW_RIGHTS_GRACE_PERIOD}-day grace period)")
-            else:
-                # Check specific abuse filter activity
-                filter_last_date, filter_days_inactive = self.get_user_abusefilter_activity(username)
-                
-                if filter_days_inactive >= self.ABUSEFILTER_ADMIN_THRESHOLD:
-                    logger.info(f"{username} has no abuse filter activity for {filter_days_inactive} days")
-                    
-                    # Only remove abusefilter-admin right
-                    rights_to_remove.append("abusefilter-admin")
-                    removal_reasons["abusefilter-admin"] = {
-                        "days_inactive": filter_days_inactive,
-                        "last_activity": filter_last_date
-                    }
-        
+
         # Standard inactivity check for sysop/bureaucrat rights
         if has_special_rights and days_inactive >= self.RIGHTS_REMOVAL_THRESHOLD:
             logger.info(f"{username} has been inactive for {days_inactive} days, exceeding rights removal threshold")
-            
+
             # Add sysop/bureaucrat to rights to remove
             for right in user_groups:
                 if right in self.BOT_REMOVABLE_RIGHTS and right not in rights_to_remove:
@@ -698,60 +634,30 @@ class ActivityBot:
                         "days_inactive": days_inactive,
                         "last_activity": last_activity_date
                     }
-        
+
         # If rights need to be removed
         if rights_to_remove:
-            # Generate rights removal message based on which rights are being removed
-            if "interface-admin" in rights_to_remove and len(rights_to_remove) == 1:
-                # Only interface-admin is being removed
-                message = self.INTERFACE_ADMIN_REMOVAL_MESSAGE.format(
-                    days_inactive=removal_reasons["interface-admin"]["days_inactive"]
-                )
-                if self.remove_user_rights(username, ["interface-admin"]):
-                    if self.send_user_message(username, message):
-                        self.actions_taken["removed"].append({
-                            "user": username,
-                            "days_inactive": removal_reasons["interface-admin"]["days_inactive"],
-                            "removed_rights": ["interface-admin"],
-                            "groups": user_groups,
-                            "last_activity": removal_reasons["interface-admin"]["last_activity"]
-                        })
-            elif "abusefilter-admin" in rights_to_remove and len(rights_to_remove) == 1:
-                # Only abusefilter-admin is being removed
-                message = self.ABUSEFILTER_ADMIN_REMOVAL_MESSAGE.format(
-                    days_inactive=removal_reasons["abusefilter-admin"]["days_inactive"]
-                )
-                if self.remove_user_rights(username, ["abusefilter-admin"]):
-                    if self.send_user_message(username, message):
-                        self.actions_taken["removed"].append({
-                            "user": username,
-                            "days_inactive": removal_reasons["abusefilter-admin"]["days_inactive"],
-                            "removed_rights": ["abusefilter-admin"],
-                            "groups": user_groups,
-                            "last_activity": removal_reasons["abusefilter-admin"]["last_activity"]
-                        })
-            else:
-                # Multiple rights or standard rights removal
-                message = self.RIGHTS_REMOVAL_MESSAGE.format(
-                    days_inactive=days_inactive,
-                    rights_removed=", ".join(rights_to_remove)
-                )
-                if self.remove_user_rights(username, rights_to_remove):
-                    if self.send_user_message(username, message):
-                        self.actions_taken["removed"].append({
-                            "user": username,
-                            "days_inactive": days_inactive,
-                            "removed_rights": rights_to_remove,
-                            "groups": user_groups,
-                            "last_activity": last_activity_date
-                        })
-        
+            # Generate rights removal message
+            message = self.RIGHTS_REMOVAL_MESSAGE.format(
+                days_inactive=days_inactive,
+                rights_removed=", ".join(rights_to_remove)
+            )
+            if self.remove_user_rights(username, rights_to_remove):
+                if self.send_user_message(username, message):
+                    self.actions_taken["removed"].append({
+                        "user": username,
+                        "days_inactive": days_inactive,
+                        "removed_rights": rights_to_remove,
+                        "groups": user_groups,
+                        "last_activity": last_activity_date
+                    })
+
         # Warning check
         elif has_special_rights and days_inactive >= self.WARNING_THRESHOLD:
             # Check if the user has already been warned recently
             warning_record = self.warned_users.get(username, {})
             last_warning_date = warning_record.get("date", "")
-            
+
             # Calculate days since last warning if it exists
             days_since_warning = 999  # Default to a high number
             if last_warning_date:
@@ -761,27 +667,27 @@ class ActivityBot:
                     days_since_warning = (datetime.datetime.now(pytz.UTC) - last_warning_dt).days
                 except Exception as e:
                     logger.error(f"Error parsing last warning date for {username}: {e}")
-            
+
             # Send warning if no recent warning has been sent
             if days_since_warning >= self.WARNING_COOLDOWN:
                 logger.info(f"{username} has been inactive for {days_inactive} days, sending warning")
-                
+
                 # Calculate days remaining before rights removal
                 days_remaining = self.RIGHTS_REMOVAL_THRESHOLD - days_inactive
-                
+
                 # Send warning message
                 message = self.WARNING_MESSAGE.format(
                     days_inactive=days_inactive,
                     days_remaining=days_remaining
                 )
-                
+
                 if self.send_user_message(username, message):
                     # Update warned users record
                     self.warned_users[username] = {
                         "date": self.today,
                         "days_inactive": days_inactive
                     }
-                    
+
                     # Add to actions taken
                     self.actions_taken["warned"].append({
                         "user": username,
