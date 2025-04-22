@@ -41,7 +41,7 @@ class ActivityBot:
     
     # Users to exclude from inactivity checks, usually stewards, and bots operated by MediaWiki and Steward
     EXCLUDED_USERS = [
-        "EPIC", "Dmehus", "Drummingman", "Justarandomamerican", 
+        "EPIC", "Drummingman", "Justarandomamerican", 
         "MacFan4000", "Abuse filter", "FuzzyBot", "MacFanBot",
     ]
     
@@ -53,14 +53,14 @@ class ActivityBot:
     
     # Message templates
     WARNING_MESSAGE = (
-        "Hello {{BASEPAGENAME}}! This is an automated message to inform you that you have not made any edits "
+        "Hello {{subst:BASEPAGENAME}}! This is an automated message to inform you that you have not made any edits "
         "or log actions in the past {days_inactive} days. According to the [[TW:IP|inactivity policy]], "
         "user rights may be removed after 90 days of inactivity. If you wish to retain your user rights, "
         "please make an edit or log action within the next {days_remaining} days. Thank you! ~~~~"
     )
     
     RIGHTS_REMOVAL_MESSAGE = (
-        "Hello {{BASEPAGENAME}}! This is an automated message to inform you that due to {days_inactive} days of inactivity, "
+        "Hello {{subst:BASEPAGENAME}}! This is an automated message to inform you that due to {days_inactive} days of inactivity, "
         "the following user rights have been removed from your account: {rights_removed} "
         "According to the [[TW:IP|inactivity policy]], user rights are removed after 3 months of inactivity. "
         "If you wish to regain these rights, please request it at [[Test_Wiki:Request_for_permissions|Request for permissions]]. Thank you for your understanding! ~~~~"
