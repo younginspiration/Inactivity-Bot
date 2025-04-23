@@ -906,8 +906,16 @@ class ActivityBot:
         self.get_users_by_group()
         
         # Process each user in monitored groups
+        processed_users = set()
         for group, users in self.users_by_group.items():
             for username in users:
+                if (username in processed_users or 
+                    username in self.EXCLUDED_USERS or 
+                    username == self.BOT_USERNAME.split('@')[0]):
+                    continue
+                        
+                processed_users.add(username)
+
                 try:
                     # Get all groups this user belongs to
                     user_groups = []
