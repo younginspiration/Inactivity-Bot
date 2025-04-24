@@ -41,7 +41,7 @@ class ActivityBot:
     
     # Users to exclude from inactivity checks, usually stewards, and bots operated by MediaWiki and Steward
     EXCLUDED_USERS = [
-        "EPIC", "Drummingman", "Justarandomamerican", 
+        "EPIC", "Drummingman", "Justarandomamerican", "X",
         "MacFan4000", "Abuse filter", "FuzzyBot", "MacFanBot", "Justarandomamerican (BOT)",
     ]
     
