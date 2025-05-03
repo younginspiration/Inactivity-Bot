@@ -30,7 +30,7 @@ class ActivityBot:
     # Inactivity thresholds
     WARNING_THRESHOLD = 75  # days
     RIGHTS_REMOVAL_THRESHOLD = 90  # days
-    WARNING_COOLDOWN = 14  # days
+    WARNING_COOLDOWN = 15  # days
     REPORT_RETENTION = 20  # days
     
     # User groups to monitor
