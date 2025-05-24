@@ -1010,3 +1010,44 @@
 2025-05-23 01:17:00,431 - ActivityBot - INFO - No actions to report today
 2025-05-23 01:17:00,432 - ActivityBot - INFO - ActivityBot execution completed
 2025-05-23 01:17:00,432 - ActivityBot - INFO - Summary: Warned 0 users, removed rights from 0 users
+2025-05-24 01:14:09,719 - ActivityBot - INFO - Starting ActivityBot execution
+2025-05-24 01:14:10,163 - ActivityBot - INFO - Obtained login token: 829f9...2+\
+2025-05-24 01:14:10,254 - ActivityBot - INFO - Successfully logged in as Inactivity Bot
+2025-05-24 01:14:10,288 - ActivityBot - INFO - Refreshed CSRF token: b28b2...2+\
+2025-05-24 01:14:10,317 - ActivityBot - INFO - Refreshed userrights token: 7012b...2+\
+2025-05-24 01:14:10,346 - ActivityBot - INFO - Found users in group 'sysop': 38
+2025-05-24 01:14:10,375 - ActivityBot - INFO - Found users in group 'bureaucrat': 28
+2025-05-24 01:14:10,375 - ActivityBot - INFO - Checking activity for AlPaD (groups: sysop, bureaucrat)
+2025-05-24 01:14:10,493 - ActivityBot - INFO - Checking activity for Alachuckthebuck (groups: sysop, bureaucrat)
+2025-05-24 01:14:10,558 - ActivityBot - INFO - Checking activity for BZPN (groups: sysop, bureaucrat)
+2025-05-24 01:14:10,620 - ActivityBot - INFO - Checking activity for BasiclyHugh (groups: sysop)
+2025-05-24 01:14:10,684 - ActivityBot - INFO - Checking activity for Bhairava7 (groups: sysop, bureaucrat)
+2025-05-24 01:14:10,755 - ActivityBot - INFO - Checking activity for Bosco (groups: sysop, bureaucrat)
+2025-05-24 01:14:10,832 - ActivityBot - INFO - Checking activity for Bosco-bot (groups: sysop)
+2025-05-24 01:14:10,902 - ActivityBot - INFO - Checking activity for Brewster239 (groups: sysop, bureaucrat)
+2025-05-24 01:14:11,029 - ActivityBot - INFO - Checking activity for Bunnypranav (groups: sysop, bureaucrat)
+2025-05-24 01:14:11,128 - ActivityBot - INFO - Checking activity for C1K98V (groups: sysop, bureaucrat)
+2025-05-24 01:14:11,192 - ActivityBot - INFO - Checking activity for CanonNi (groups: sysop, bureaucrat)
+2025-05-24 01:14:11,269 - ActivityBot - INFO - Checking activity for Chaotic Enby (groups: sysop)
+2025-05-24 01:14:11,360 - ActivityBot - INFO - Checking activity for Codename Noreste (groups: sysop, bureaucrat)
+2025-05-24 01:14:11,483 - ActivityBot - INFO - Checking activity for Célian (groups: sysop, bureaucrat)
+2025-05-24 01:14:11,550 - ActivityBot - INFO - Checking activity for DR (groups: sysop)
+2025-05-24 01:14:11,614 - ActivityBot - INFO - Checking activity for DodoMan (groups: sysop, bureaucrat)
+2025-05-24 01:14:11,681 - ActivityBot - INFO - Checking activity for It's moon (groups: sysop)
+2025-05-24 01:14:11,746 - ActivityBot - INFO - Checking activity for Janus (groups: sysop, bureaucrat)
+2025-05-24 01:14:11,816 - ActivityBot - INFO - Checking activity for Justman10000 (groups: sysop, bureaucrat)
+2025-05-24 01:14:11,885 - ActivityBot - INFO - Checking activity for Leo (groups: sysop, bureaucrat)
+2025-05-24 01:14:11,949 - ActivityBot - INFO - Checking activity for LisafBia (groups: sysop, bureaucrat)
+2025-05-24 01:14:12,023 - ActivityBot - INFO - Checking activity for PandaFiredoge (groups: sysop)
+2025-05-24 01:14:12,087 - ActivityBot - INFO - Checking activity for Sidrat al-Muntaha (groups: sysop, bureaucrat)
+2025-05-24 01:14:12,149 - ActivityBot - INFO - Checking activity for Sneezless (groups: sysop, bureaucrat)
+2025-05-24 01:14:12,217 - ActivityBot - INFO - Checking activity for Tailsultimatefan3891 (groups: sysop)
+2025-05-24 01:14:12,289 - ActivityBot - INFO - Tailsultimatefan3891 has been inactive for 75 days, sending warning
+2025-05-24 01:14:13,343 - ActivityBot - INFO - Successfully sent message to User talk:Tailsultimatefan3891
+2025-05-24 01:14:13,343 - ActivityBot - INFO - Checking activity for TenWhile6 (groups: sysop, bureaucrat)
+2025-05-24 01:14:13,436 - ActivityBot - INFO - Checking activity for Tester (groups: sysop, bureaucrat)
+2025-05-24 01:14:13,564 - ActivityBot - INFO - Checking activity for Thejoppyloppy (groups: sysop)
+2025-05-24 01:14:13,747 - ActivityBot - INFO - Removing old report from 2025-05-02 (22 days old)
+2025-05-24 01:14:14,521 - ActivityBot - INFO - Successfully updated Activity/Reports page
+2025-05-24 01:14:14,522 - ActivityBot - INFO - ActivityBot execution completed
+2025-05-24 01:14:14,522 - ActivityBot - INFO - Summary: Warned 1 users, removed rights from 0 users
