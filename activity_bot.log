@@ -1354,3 +1354,44 @@
 2025-05-29 13:28:47,704 - ActivityBot - INFO - No actions to report today
 2025-05-29 13:28:47,705 - ActivityBot - INFO - ActivityBot execution completed
 2025-05-29 13:28:47,705 - ActivityBot - INFO - Summary: Warned 0 users, removed rights from 0 users
+2025-05-30 01:15:33,898 - ActivityBot - INFO - Starting ActivityBot execution
+2025-05-30 01:15:33,987 - ActivityBot - INFO - Obtained login token: 82ff1...5+\
+2025-05-30 01:15:34,067 - ActivityBot - INFO - Successfully logged in as Inactivity Bot
+2025-05-30 01:15:34,099 - ActivityBot - INFO - Refreshed CSRF token: 3e0f6...6+\
+2025-05-30 01:15:34,128 - ActivityBot - INFO - Refreshed userrights token: 37487...6+\
+2025-05-30 01:15:34,157 - ActivityBot - INFO - Found users in group 'sysop': 38
+2025-05-30 01:15:34,189 - ActivityBot - INFO - Found users in group 'bureaucrat': 28
+2025-05-30 01:15:34,189 - ActivityBot - INFO - Checking activity for AlPaD (groups: sysop, bureaucrat)
+2025-05-30 01:15:34,285 - ActivityBot - INFO - Checking activity for Alachuckthebuck (groups: sysop, bureaucrat)
+2025-05-30 01:15:34,350 - ActivityBot - INFO - Checking activity for BZPN (groups: sysop, bureaucrat)
+2025-05-30 01:15:34,413 - ActivityBot - INFO - Checking activity for BasiclyHugh (groups: sysop)
+2025-05-30 01:15:34,477 - ActivityBot - INFO - Checking activity for Bhairava7 (groups: sysop, bureaucrat)
+2025-05-30 01:15:34,546 - ActivityBot - INFO - Checking activity for Bosco (groups: sysop, bureaucrat)
+2025-05-30 01:15:34,613 - ActivityBot - INFO - Checking activity for Brewster239 (groups: sysop, bureaucrat)
+2025-05-30 01:15:34,681 - ActivityBot - INFO - Checking activity for Bunnypranav (groups: sysop, bureaucrat)
+2025-05-30 01:15:34,745 - ActivityBot - INFO - Checking activity for C1K98V (groups: sysop, bureaucrat)
+2025-05-30 01:15:34,809 - ActivityBot - INFO - Checking activity for CanonNi (groups: sysop, bureaucrat)
+2025-05-30 01:15:34,877 - ActivityBot - INFO - Checking activity for Chaotic Enby (groups: sysop)
+2025-05-30 01:15:34,940 - ActivityBot - INFO - Checking activity for Codename Noreste (groups: sysop, bureaucrat)
+2025-05-30 01:15:35,030 - ActivityBot - INFO - Checking activity for Célian (groups: sysop, bureaucrat)
+2025-05-30 01:15:35,102 - ActivityBot - INFO - Checking activity for DR (groups: sysop)
+2025-05-30 01:15:35,207 - ActivityBot - INFO - Checking activity for DodoMan (groups: sysop, bureaucrat)
+2025-05-30 01:15:35,271 - ActivityBot - INFO - Checking activity for It's moon (groups: sysop)
+2025-05-30 01:15:35,335 - ActivityBot - INFO - Checking activity for Janus (groups: sysop, bureaucrat)
+2025-05-30 01:15:35,432 - ActivityBot - INFO - Checking activity for Justman10000 (groups: sysop, bureaucrat)
+2025-05-30 01:15:35,513 - ActivityBot - INFO - Checking activity for Leo (groups: sysop, bureaucrat)
+2025-05-30 01:15:35,575 - ActivityBot - INFO - Checking activity for LisafBia (groups: sysop, bureaucrat)
+2025-05-30 01:15:35,657 - ActivityBot - INFO - Checking activity for PandaFiredoge (groups: sysop)
+2025-05-30 01:15:35,725 - ActivityBot - INFO - PandaFiredoge has been inactive for 90 days, exceeding rights removal threshold
+2025-05-30 01:15:38,120 - ActivityBot - INFO - Successfully removed rights ['sysop'] from PandaFiredoge
+2025-05-30 01:15:38,925 - ActivityBot - INFO - Successfully sent message to User talk:PandaFiredoge
+2025-05-30 01:15:38,925 - ActivityBot - INFO - Checking activity for RubiiChan (groups: sysop)
+2025-05-30 01:15:39,043 - ActivityBot - INFO - Checking activity for Sidrat al-Muntaha (groups: sysop, bureaucrat)
+2025-05-30 01:15:39,132 - ActivityBot - INFO - Checking activity for Sneezless (groups: sysop, bureaucrat)
+2025-05-30 01:15:39,214 - ActivityBot - INFO - Checking activity for Tailsultimatefan3891 (groups: sysop)
+2025-05-30 01:15:39,279 - ActivityBot - INFO - Checking activity for TenWhile6 (groups: sysop, bureaucrat)
+2025-05-30 01:15:39,345 - ActivityBot - INFO - Checking activity for Tester (groups: sysop, bureaucrat)
+2025-05-30 01:15:39,408 - ActivityBot - INFO - Checking activity for Thejoppyloppy (groups: sysop)
+2025-05-30 01:15:40,168 - ActivityBot - INFO - Successfully updated Activity/Reports page
+2025-05-30 01:15:40,168 - ActivityBot - INFO - ActivityBot execution completed
+2025-05-30 01:15:40,168 - ActivityBot - INFO - Summary: Warned 0 users, removed rights from 1 users
