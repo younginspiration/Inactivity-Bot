@@ -34,8 +34,8 @@ jobs:
         
       - name: Configure Git
         run: |
-          git config --global user.name "younginspiration"
-          git config --global user.email "theastorpastor@gmail.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           
       - name: Commit and push changes
         run: |
