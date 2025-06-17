@@ -1,4 +1,4 @@
-# Activity Bot
+# Inactivity Bot
 This bot monitors user activity on Test Wiki and automatically manages user rights based on inactivity thresholds. It tracks administrators and bureaucrats, removing rights from inactive users and notifying them of these changes.
 
 ## How It Works
