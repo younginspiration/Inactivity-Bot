@@ -64,3 +64,7 @@
 2025-08-10 01:39:25,500 - ActivityBot - INFO - Yuki Shiromita has been inactive for 10 days (threshold: 90)
 2025-08-10 01:39:25,500 - ActivityBot - INFO - No actions to report today
 2025-08-10 01:39:25,500 - ActivityBot - INFO - ActivityBot execution completed. Actions taken: 0 rights removals
+2025-08-11 01:26:44,281 - ActivityBot - INFO - Starting ActivityBot execution
+2025-08-11 01:28:57,575 - ActivityBot - ERROR - API request error: HTTPSConnectionPool(host='testwiki.wiki', port=443): Max retries exceeded with url: /api.php?action=query&meta=tokens&format=json&type=login (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7fe309bf3770>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+2025-08-11 01:28:57,575 - ActivityBot - ERROR - Failed to get login token
+2025-08-11 01:28:57,575 - ActivityBot - ERROR - Failed to login, aborting execution
