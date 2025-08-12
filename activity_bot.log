@@ -68,3 +68,6 @@
 2025-08-11 01:28:57,575 - ActivityBot - ERROR - API request error: HTTPSConnectionPool(host='testwiki.wiki', port=443): Max retries exceeded with url: /api.php?action=query&meta=tokens&format=json&type=login (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7fe309bf3770>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
 2025-08-11 01:28:57,575 - ActivityBot - ERROR - Failed to get login token
 2025-08-11 01:28:57,575 - ActivityBot - ERROR - Failed to login, aborting execution
+2025-08-12 01:18:36,729 - ActivityBot - INFO - Starting ActivityBot execution
+2025-08-12 01:18:37,457 - ActivityBot - ERROR - Failed to get login token
+2025-08-12 01:18:37,457 - ActivityBot - ERROR - Failed to login, aborting execution
