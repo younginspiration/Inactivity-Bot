@@ -39,7 +39,7 @@ class ActivityBot:
     # Users to exclude from all checks
     EXCLUDED_USERS = {
         "EPIC", "Drummingman", "Justarandomamerican", "X",
-        "MacFan4000", "Abuse filter", "FuzzyBot", "MacFanBot", "Justarandomamerican (BOT)"
+        "MacFan4000","TheAstorPastor", "Abuse filter", "FuzzyBot", "MacFanBot", "Justarandomamerican (BOT)"
     }
     
     # Token management
