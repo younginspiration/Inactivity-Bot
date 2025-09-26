@@ -986,3 +986,68 @@
 2025-09-25 01:12:58,949 - ActivityBot - INFO - Yuki Shiromita has been inactive for 10 days (threshold: 90)
 2025-09-25 01:12:58,949 - ActivityBot - INFO - No actions to report today
 2025-09-25 01:12:58,949 - ActivityBot - INFO - ActivityBot execution completed. Actions taken: 0 rights removals
+2025-09-26 01:11:54,485 - ActivityBot - INFO - Starting ActivityBot execution
+2025-09-26 01:11:55,333 - ActivityBot - INFO - Obtained login token: 03f2f...b+\
+2025-09-26 01:11:55,963 - ActivityBot - INFO - Successfully logged in as Inactivity Bot
+2025-09-26 01:11:56,557 - ActivityBot - INFO - Obtained csrf token: 01f01...c+\
+2025-09-26 01:11:57,147 - ActivityBot - INFO - Obtained userrights token: 85257...d+\
+2025-09-26 01:11:57,740 - ActivityBot - INFO - Found 27 users in group 'sysop' (after exclusions)
+2025-09-26 01:11:58,333 - ActivityBot - INFO - Found 20 users in group 'bureaucrat' (after exclusions)
+2025-09-26 01:11:58,333 - ActivityBot - INFO - Checking activity for AlPaD (groups: sysop, bureaucrat)
+2025-09-26 01:11:59,540 - ActivityBot - INFO - AlPaD has been inactive for 22 days (threshold: 90)
+2025-09-26 01:11:59,540 - ActivityBot - INFO - Checking activity for Alachuckthebuck (groups: sysop, bureaucrat)
+2025-09-26 01:12:00,733 - ActivityBot - INFO - Alachuckthebuck has been inactive for 56 days (threshold: 90)
+2025-09-26 01:12:00,733 - ActivityBot - INFO - Checking activity for Bosco (groups: sysop, bureaucrat)
+2025-09-26 01:12:01,928 - ActivityBot - INFO - Bosco has been inactive for 3 days (threshold: 90)
+2025-09-26 01:12:01,928 - ActivityBot - INFO - Checking activity for Bunnypranav (groups: sysop, bureaucrat)
+2025-09-26 01:12:03,117 - ActivityBot - INFO - Bunnypranav has been inactive for 46 days (threshold: 90)
+2025-09-26 01:12:03,117 - ActivityBot - INFO - Checking activity for C1K98V (groups: sysop, bureaucrat)
+2025-09-26 01:12:04,315 - ActivityBot - INFO - C1K98V has been inactive for 85 days (threshold: 90)
+2025-09-26 01:12:04,315 - ActivityBot - INFO - Checking activity for Chaotic Enby (groups: sysop)
+2025-09-26 01:12:05,504 - ActivityBot - INFO - Chaotic Enby has been inactive for 64 days (threshold: 90)
+2025-09-26 01:12:05,504 - ActivityBot - INFO - Checking activity for Codename Noreste (groups: sysop, bureaucrat)
+2025-09-26 01:12:06,693 - ActivityBot - INFO - Codename Noreste has been inactive for 38 days (threshold: 90)
+2025-09-26 01:12:06,693 - ActivityBot - INFO - Checking activity for Célian (groups: sysop, bureaucrat)
+2025-09-26 01:12:07,883 - ActivityBot - INFO - Célian has been inactive for 72 days (threshold: 90)
+2025-09-26 01:12:07,883 - ActivityBot - INFO - Checking activity for DR (groups: sysop)
+2025-09-26 01:12:09,074 - ActivityBot - INFO - DR has been inactive for 45 days (threshold: 90)
+2025-09-26 01:12:09,074 - ActivityBot - INFO - Checking activity for DodoMan (groups: sysop, bureaucrat)
+2025-09-26 01:12:10,264 - ActivityBot - INFO - DodoMan has been inactive for 5 days (threshold: 90)
+2025-09-26 01:12:10,264 - ActivityBot - INFO - Checking activity for Euphoria (groups: sysop)
+2025-09-26 01:12:11,456 - ActivityBot - INFO - Euphoria has been inactive for 0 days (threshold: 90)
+2025-09-26 01:12:11,456 - ActivityBot - INFO - Checking activity for Gigi (groups: sysop)
+2025-09-26 01:12:12,644 - ActivityBot - INFO - Gigi has been inactive for 0 days (threshold: 90)
+2025-09-26 01:12:12,644 - ActivityBot - INFO - Checking activity for Inactivity Bot (groups: sysop, bureaucrat)
+2025-09-26 01:12:12,644 - ActivityBot - INFO - Skipping excluded user: Inactivity Bot
+2025-09-26 01:12:12,644 - ActivityBot - INFO - Checking activity for JJDCT (groups: sysop, bureaucrat)
+2025-09-26 01:12:13,832 - ActivityBot - INFO - JJDCT has been inactive for 0 days (threshold: 90)
+2025-09-26 01:12:13,832 - ActivityBot - INFO - Checking activity for Janus (groups: sysop, bureaucrat)
+2025-09-26 01:12:15,023 - ActivityBot - INFO - Janus has been inactive for 0 days (threshold: 90)
+2025-09-26 01:12:15,023 - ActivityBot - INFO - Checking activity for Leo (groups: sysop, bureaucrat)
+2025-09-26 01:12:16,211 - ActivityBot - INFO - Leo has been inactive for 16 days (threshold: 90)
+2025-09-26 01:12:16,211 - ActivityBot - INFO - Checking activity for MikeGoodman (groups: sysop)
+2025-09-26 01:12:17,399 - ActivityBot - INFO - MikeGoodman has been inactive for 6 days (threshold: 90)
+2025-09-26 01:12:17,399 - ActivityBot - INFO - Checking activity for Noeruchan (groups: sysop)
+2025-09-26 01:12:18,589 - ActivityBot - INFO - Noeruchan has been inactive for 90 days, exceeding rights removal threshold
+2025-09-26 01:12:20,992 - ActivityBot - INFO - Successfully removed rights ['sysop'] from Noeruchan
+2025-09-26 01:12:21,988 - ActivityBot - INFO - Successfully sent message to User talk:Noeruchan
+2025-09-26 01:12:21,988 - ActivityBot - INFO - Checking activity for Noël Tchallagassou (groups: sysop, bureaucrat)
+2025-09-26 01:12:23,178 - ActivityBot - INFO - Noël Tchallagassou has been inactive for 29 days (threshold: 90)
+2025-09-26 01:12:23,178 - ActivityBot - INFO - Checking activity for Peterxy12 (groups: sysop, bureaucrat)
+2025-09-26 01:12:24,366 - ActivityBot - INFO - Peterxy12 has been inactive for 4 days (threshold: 90)
+2025-09-26 01:12:24,367 - ActivityBot - INFO - Checking activity for Pro-anti-air (groups: sysop, bureaucrat)
+2025-09-26 01:12:25,555 - ActivityBot - INFO - Pro-anti-air has been inactive for 2 days (threshold: 90)
+2025-09-26 01:12:25,555 - ActivityBot - INFO - Checking activity for Quercusrobur2744r (groups: sysop)
+2025-09-26 01:12:26,743 - ActivityBot - INFO - Quercusrobur2744r has been inactive for 38 days (threshold: 90)
+2025-09-26 01:12:26,743 - ActivityBot - INFO - Checking activity for SaoMikoto (groups: sysop, bureaucrat)
+2025-09-26 01:12:27,932 - ActivityBot - INFO - SaoMikoto has been inactive for 2 days (threshold: 90)
+2025-09-26 01:12:27,932 - ActivityBot - INFO - Checking activity for Sidrat al-Muntaha (groups: sysop, bureaucrat)
+2025-09-26 01:12:29,120 - ActivityBot - INFO - Sidrat al-Muntaha has been inactive for 23 days (threshold: 90)
+2025-09-26 01:12:29,121 - ActivityBot - INFO - Checking activity for Tester (groups: sysop, bureaucrat)
+2025-09-26 01:12:30,347 - ActivityBot - INFO - Tester has been inactive for 5 days (threshold: 90)
+2025-09-26 01:12:30,347 - ActivityBot - INFO - Checking activity for VancityRothaug (groups: sysop, bureaucrat)
+2025-09-26 01:12:31,553 - ActivityBot - INFO - VancityRothaug has been inactive for 24 days (threshold: 90)
+2025-09-26 01:12:31,554 - ActivityBot - INFO - Checking activity for Yuki Shiromita (groups: sysop, bureaucrat)
+2025-09-26 01:12:32,743 - ActivityBot - INFO - Yuki Shiromita has been inactive for 11 days (threshold: 90)
+2025-09-26 01:12:35,990 - ActivityBot - INFO - Successfully updated Activity/Reports page
+2025-09-26 01:12:35,990 - ActivityBot - INFO - ActivityBot execution completed. Actions taken: 1 rights removals
