@@ -370,7 +370,7 @@ class ActivityBot:
         """Get current activity report page content."""
         params = {
             "action": "query",
-            "titles": "Activity/Reports",
+            "titles": "Test Wiki:Activity reports",
             "prop": "revisions",
             "rvprop": "content",
             "rvslots": "main",
@@ -472,7 +472,7 @@ class ActivityBot:
         
         edit_params = {
             "action": "edit",
-            "title": "Activity/Reports",
+            "title": "Test Wiki:Activity reports",
             "text": updated_content,
             "summary": f"Updated activity report for {self.today}",
             "token": self.tokens["csrf"],
@@ -481,10 +481,10 @@ class ActivityBot:
         
         data = self._api_request("POST", {}, edit_params)
         if data and "error" not in data:
-            logger.info("Successfully updated Activity/Reports page")
+            logger.info("Successfully updated Test Wiki:Activity reports page")
             return True
         else:
-            logger.error("Failed to update Activity/Reports page")
+            logger.error("Failed to update Test Wiki:Activity reports page")
             return False
 
     def run(self) -> None:
