@@ -28,6 +28,7 @@ class ActivityBot:
 
     # Inactivity thresholds
     RIGHTS_REMOVAL_THRESHOLD = 90  # days
+    RIGHTS_ASSIGNMENT_GRACE_PERIOD = 7  # days - new rights assigned within this period won't be removed
     REPORT_RETENTION = 20  # days
     
     # Rate limiting
@@ -39,11 +40,8 @@ class ActivityBot:
     # Users to exclude from all checks
     EXCLUDED_USERS = {
         "EPIC", "Drummingman", "Justarandomamerican", "X",
-        "MacFan4000","TheAstorPastor", "Abuse filter", "DodoBot", "FuzzyBot", "MacFanBot", "Justarandomamerican (BOT)"
+        "MacFan4000","TheAstorPastor", "Abuse filter", "FuzzyBot", "MacFanBot", "Justarandomamerican (BOT)"
     }
-    
-    # Token management
-    TOKEN_REFRESH_INTERVAL = 15 * 60  # 15 minutes in seconds
     
     # Message template
     RIGHTS_REMOVAL_MESSAGE = (
@@ -57,7 +55,6 @@ class ActivityBot:
     def __init__(self):
         self.session = requests.Session()
         self.tokens = {}
-        self.token_timestamp = {}
         self.users_by_group = {}
         self.actions_taken = {"removed": []}
         self.timezone = pytz.UTC
@@ -87,7 +84,7 @@ class ActivityBot:
             return None
 
     def _get_token(self, token_type: str) -> Optional[str]:
-        """Get a token, either from cache or by fetching a new one."""
+        """Get a token for API requests."""
         token_configs = {
             "login": {"type": "login", "key": "logintoken"},
             "csrf": {"type": None, "key": "csrftoken"},
@@ -115,19 +112,9 @@ class ActivityBot:
         token = data.get("query", {}).get("tokens", {}).get(config["key"])
         if token:
             self.tokens[token_type] = token
-            self.token_timestamp[token_type] = time.time()
-            logger.info(f"Obtained {token_type} token: {token[:5]}...{token[-3:]}")
+            logger.info(f"Obtained {token_type} token")
             
         return token
-
-    def _ensure_token_fresh(self, token_type: str) -> bool:
-        """Ensure a token is fresh, refreshing it if necessary."""
-        if (token_type not in self.tokens or 
-            token_type not in self.token_timestamp or 
-            time.time() - self.token_timestamp.get(token_type, 0) > self.TOKEN_REFRESH_INTERVAL):
-            logger.info(f"{token_type} token expired or missing - refreshing")
-            return self._get_token(token_type) is not None
-        return True
 
     def login(self) -> bool:
         """Log in to the MediaWiki API."""
@@ -229,6 +216,41 @@ class ActivityBot:
         
         return last_timestamp, days_inactive
 
+    def _get_rights_assignment_dates(self, username: str, rights: List[str]) -> Dict[str, Optional[datetime.datetime]]:
+        """Get the dates when specific rights were assigned to a user."""
+        assignment_dates = {right: None for right in rights}
+        
+        params = {
+            "action": "query",
+            "list": "logevents",
+            "letype": "rights",
+            "letitle": f"User:{username}",
+            "leprop": "timestamp|details",
+            "lelimit": "500",
+            "format": "json"
+        }
+        
+        data = self._api_request("GET", params)
+        if not data:
+            return assignment_dates
+            
+        log_events = data.get("query", {}).get("logevents", [])
+        
+        for event in reversed(log_events):  # Process from oldest to newest
+            if "params" not in event:
+                continue
+                
+            new_rights = event.get("params", {}).get("newgroups", [])
+            old_rights = event.get("params", {}).get("oldgroups", [])
+            timestamp = self._parse_timestamp(event["timestamp"])
+            
+            # Check which rights were added in this event
+            for right in rights:
+                if right in new_rights and right not in old_rights:
+                    assignment_dates[right] = timestamp
+        
+        return assignment_dates
+
     def _is_recently_active(self, username: str) -> bool:
         """Check if the user has been active very recently (safety check)."""
         _, days_inactive = self._get_user_activity_data(username)
@@ -236,9 +258,6 @@ class ActivityBot:
 
     def _send_message_to_user(self, username: str, message: str) -> bool:
         """Send a message to a user's talk page."""
-        if not self._ensure_token_fresh("csrf"):
-            return False
-            
         params = {
             "action": "edit",
             "title": f"User talk:{username}",
@@ -278,12 +297,9 @@ class ActivityBot:
         return users_data[0].get("groups", [])
 
     def _remove_rights_from_user(self, username: str, rights_to_remove: List[str]) -> bool:
-        """Remove specified rights from a user."""
+        """Remove specified rights from a user, but skip rights assigned within grace period."""
         if self._is_recently_active(username):
             logger.info(f"User {username} has been active recently. Not removing rights.")
-            return False
-            
-        if not self._ensure_token_fresh("userrights"):
             return False
             
         current_rights = self._get_user_current_rights(username)
@@ -292,6 +308,25 @@ class ActivityBot:
         if not actual_rights_to_remove:
             logger.info(f"No removable rights found for {username}")
             return False
+        
+        # Check assignment dates for rights
+        assignment_dates = self._get_rights_assignment_dates(username, actual_rights_to_remove)
+        now = datetime.datetime.now(pytz.UTC)
+        
+        # Filter out rights that were assigned within the grace period
+        filtered_rights = []
+        for right in actual_rights_to_remove:
+            assignment_date = assignment_dates.get(right)
+            if assignment_date:
+                days_since_assignment = (now - assignment_date).days
+                if days_since_assignment <= self.RIGHTS_ASSIGNMENT_GRACE_PERIOD:
+                    logger.info(f"Right '{right}' for user {username} was assigned {days_since_assignment} days ago (within {self.RIGHTS_ASSIGNMENT_GRACE_PERIOD}-day grace period). Skipping removal.")
+                    continue
+            filtered_rights.append(right)
+        
+        if not filtered_rights:
+            logger.info(f"All rights for {username} are within the grace period. Not removing any rights.")
+            return False
             
         params = {
             "action": "userrights",
@@ -299,14 +334,14 @@ class ActivityBot:
             "add": "",
             "expiry": "",
             "reason": "Automatically removed due to inactivity",
-            "remove": "|".join(actual_rights_to_remove),
+            "remove": "|".join(filtered_rights),
             "token": self.tokens["userrights"],
             "format": "json"
         }
         
         data = self._api_request("POST", {}, params)
         if data and "error" not in data:
-            logger.info(f"Successfully removed rights {actual_rights_to_remove} from {username}")
+            logger.info(f"Successfully removed rights {filtered_rights} from {username}")
             return True
         else:
             logger.error(f"Failed to remove rights from {username}")
@@ -447,9 +482,6 @@ class ActivityBot:
         if not self.actions_taken["removed"]:
             logger.info("No actions to report today")
             return True
-            
-        if not self._ensure_token_fresh("csrf"):
-            return False
         
         page_content = self._get_current_report_content()
         
