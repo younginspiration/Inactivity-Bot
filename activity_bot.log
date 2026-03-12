@@ -5179,3 +5179,7 @@
 2026-03-11 01:46:42,055 - ActivityBot - INFO - Yuki Shiromita has been inactive for 4 days (threshold: 90)
 2026-03-11 01:46:42,055 - ActivityBot - INFO - No actions to report today
 2026-03-11 01:46:42,055 - ActivityBot - INFO - ActivityBot execution completed. Actions taken: 0 rights removals
+2026-03-12 01:49:37,374 - ActivityBot - INFO - Starting ActivityBot execution
+2026-03-12 01:49:55,391 - ActivityBot - ERROR - API request error: 503 Server Error: Service Unavailable for url: https://testwiki.wiki/api.php?action=query&meta=tokens&format=json&type=login
+2026-03-12 01:49:55,391 - ActivityBot - ERROR - Failed to get login token
+2026-03-12 01:49:55,391 - ActivityBot - ERROR - Failed to login, aborting execution
