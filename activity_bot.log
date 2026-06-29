@@ -2606,3 +2606,7 @@
 2026-06-28 03:28:20,027 - ActivityBot - ERROR - API request error: 403 Client Error: Forbidden for url: https://testwiki.wiki/api.php?action=query&meta=tokens&format=json&type=login
 2026-06-28 03:28:20,028 - ActivityBot - ERROR - Failed to get login token
 2026-06-28 03:28:20,029 - ActivityBot - ERROR - Failed to login, aborting execution
+2026-06-29 03:33:10,241 - ActivityBot - INFO - Starting ActivityBot execution
+2026-06-29 03:33:10,906 - ActivityBot - ERROR - API request error: 403 Client Error: Forbidden for url: https://testwiki.wiki/api.php?action=query&meta=tokens&format=json&type=login
+2026-06-29 03:33:10,906 - ActivityBot - ERROR - Failed to get login token
+2026-06-29 03:33:10,907 - ActivityBot - ERROR - Failed to login, aborting execution
