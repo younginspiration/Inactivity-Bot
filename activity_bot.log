@@ -2622,3 +2622,99 @@
 2026-07-01 03:28:46,709 - ActivityBot - ERROR - API request error: 403 Client Error: Forbidden for url: https://testwiki.wiki/api.php?action=query&meta=tokens&format=json&type=login
 2026-07-01 03:28:46,709 - ActivityBot - ERROR - Failed to get login token
 2026-07-01 03:28:46,709 - ActivityBot - ERROR - Failed to login, aborting execution
+2026-07-02 02:53:32,172 - ActivityBot - INFO - Starting ActivityBot execution
+2026-07-02 02:53:33,129 - ActivityBot - INFO - Obtained login token
+2026-07-02 02:53:33,990 - ActivityBot - INFO - Successfully logged in as Inactivity Bot
+2026-07-02 02:53:34,788 - ActivityBot - INFO - Obtained csrf token
+2026-07-02 02:53:35,581 - ActivityBot - INFO - Obtained userrights token
+2026-07-02 02:53:36,379 - ActivityBot - INFO - Found 32 users in group 'sysop' (after exclusions)
+2026-07-02 02:53:37,176 - ActivityBot - INFO - Found 22 users in group 'bureaucrat' (after exclusions)
+2026-07-02 02:53:37,176 - ActivityBot - INFO - Checking activity for AM (groups: sysop, bureaucrat)
+2026-07-02 02:53:39,363 - ActivityBot - INFO - AM has been inactive for 1 days (threshold: 90)
+2026-07-02 02:53:39,363 - ActivityBot - INFO - Checking activity for AlPaD (groups: sysop, bureaucrat)
+2026-07-02 02:53:41,134 - ActivityBot - INFO - AlPaD has been inactive for 78 days (threshold: 90)
+2026-07-02 02:53:41,134 - ActivityBot - INFO - Checking activity for Ameisenigel (groups: sysop, bureaucrat)
+2026-07-02 02:53:42,730 - ActivityBot - INFO - Ameisenigel has been inactive for 0 days (threshold: 90)
+2026-07-02 02:53:42,730 - ActivityBot - INFO - Checking activity for AstraVern (groups: sysop)
+2026-07-02 02:53:44,323 - ActivityBot - INFO - AstraVern has been inactive for 78 days (threshold: 90)
+2026-07-02 02:53:44,323 - ActivityBot - INFO - Checking activity for Bosco (groups: sysop, bureaucrat)
+2026-07-02 02:53:45,928 - ActivityBot - INFO - Bosco has been inactive for 4 days (threshold: 90)
+2026-07-02 02:53:45,929 - ActivityBot - INFO - Checking activity for Bosco-bot (groups: sysop)
+2026-07-02 02:53:47,529 - ActivityBot - INFO - Bosco-bot has been inactive for 36 days (threshold: 90)
+2026-07-02 02:53:47,530 - ActivityBot - INFO - Checking activity for Codename Noreste (groups: sysop, bureaucrat)
+2026-07-02 02:53:49,136 - ActivityBot - INFO - Codename Noreste has been inactive for 1 days (threshold: 90)
+2026-07-02 02:53:49,137 - ActivityBot - INFO - Checking activity for Cptabhiimanyuseven (groups: sysop, bureaucrat)
+2026-07-02 02:53:50,743 - ActivityBot - INFO - Cptabhiimanyuseven has been inactive for 133 days, exceeding rights removal threshold
+2026-07-02 02:53:56,345 - ActivityBot - INFO - Successfully removed rights ['sysop', 'bureaucrat'] from Cptabhiimanyuseven
+2026-07-02 02:53:57,279 - ActivityBot - INFO - Successfully sent message to User talk:Cptabhiimanyuseven
+2026-07-02 02:53:57,279 - ActivityBot - INFO - Checking activity for DarkMatterMan4500 (groups: sysop)
+2026-07-02 02:53:58,876 - ActivityBot - INFO - DarkMatterMan4500 has been inactive for 2 days (threshold: 90)
+2026-07-02 02:53:58,876 - ActivityBot - INFO - Checking activity for Euphoria (groups: sysop, bureaucrat)
+2026-07-02 02:54:00,476 - ActivityBot - INFO - Euphoria has been inactive for 76 days (threshold: 90)
+2026-07-02 02:54:00,476 - ActivityBot - INFO - Checking activity for Hedgehogtree (groups: sysop)
+2026-07-02 02:54:02,361 - ActivityBot - INFO - Hedgehogtree has been inactive for 127 days, exceeding rights removal threshold
+2026-07-02 02:54:07,310 - ActivityBot - INFO - Successfully removed rights ['sysop'] from Hedgehogtree
+2026-07-02 02:54:08,247 - ActivityBot - INFO - Successfully sent message to User talk:Hedgehogtree
+2026-07-02 02:54:08,247 - ActivityBot - INFO - Checking activity for HurricaneZeta (groups: sysop)
+2026-07-02 02:54:09,846 - ActivityBot - INFO - HurricaneZeta has been inactive for 96 days, exceeding rights removal threshold
+2026-07-02 02:54:14,609 - ActivityBot - INFO - Successfully removed rights ['sysop'] from HurricaneZeta
+2026-07-02 02:54:15,549 - ActivityBot - INFO - Successfully sent message to User talk:HurricaneZeta
+2026-07-02 02:54:15,549 - ActivityBot - INFO - Checking activity for Inactivity Bot (groups: sysop, bureaucrat)
+2026-07-02 02:54:15,550 - ActivityBot - INFO - Skipping excluded user: Inactivity Bot
+2026-07-02 02:54:15,550 - ActivityBot - INFO - Checking activity for Janus (groups: sysop, bureaucrat)
+2026-07-02 02:54:17,153 - ActivityBot - INFO - Janus has been inactive for 109 days, exceeding rights removal threshold
+2026-07-02 02:54:20,572 - ActivityBot - INFO - Successfully removed rights ['sysop', 'bureaucrat'] from Janus
+2026-07-02 02:54:21,643 - ActivityBot - INFO - Successfully sent message to User talk:Janus
+2026-07-02 02:54:21,643 - ActivityBot - INFO - Checking activity for Kazrok4545 (groups: sysop, bureaucrat)
+2026-07-02 02:54:24,197 - ActivityBot - INFO - Kazrok4545 has been inactive for 17 days (threshold: 90)
+2026-07-02 02:54:24,197 - ActivityBot - INFO - Checking activity for Kengkong1 (groups: sysop)
+2026-07-02 02:54:25,793 - ActivityBot - INFO - Kengkong1 has been inactive for 61 days (threshold: 90)
+2026-07-02 02:54:25,794 - ActivityBot - INFO - Checking activity for MrJaroslavik (groups: sysop, bureaucrat)
+2026-07-02 02:54:27,387 - ActivityBot - INFO - MrJaroslavik has been inactive for 63 days (threshold: 90)
+2026-07-02 02:54:27,388 - ActivityBot - INFO - Checking activity for Muffy (groups: sysop, bureaucrat)
+2026-07-02 02:54:28,989 - ActivityBot - INFO - Muffy has been inactive for 109 days, exceeding rights removal threshold
+2026-07-02 02:54:34,107 - ActivityBot - INFO - Successfully removed rights ['sysop', 'bureaucrat'] from Muffy
+2026-07-02 02:54:35,317 - ActivityBot - ERROR - API request error: 500 Server Error: Internal Server Error for url: https://testwiki.wiki/api.php
+2026-07-02 02:54:35,317 - ActivityBot - ERROR - Failed to send message to Muffy
+2026-07-02 02:54:35,317 - ActivityBot - INFO - Checking activity for NguoiDungKhongDinhDanh (groups: sysop, bureaucrat)
+2026-07-02 02:54:37,430 - ActivityBot - INFO - NguoiDungKhongDinhDanh has been inactive for 96 days, exceeding rights removal threshold
+2026-07-02 02:54:41,151 - ActivityBot - INFO - Successfully removed rights ['sysop', 'bureaucrat'] from NguoiDungKhongDinhDanh
+2026-07-02 02:54:42,087 - ActivityBot - INFO - Successfully sent message to User talk:NguoiDungKhongDinhDanh
+2026-07-02 02:54:42,087 - ActivityBot - INFO - Checking activity for Peterxy (groups: sysop, bureaucrat)
+2026-07-02 02:54:43,693 - ActivityBot - INFO - Peterxy has been inactive for 0 days (threshold: 90)
+2026-07-02 02:54:43,694 - ActivityBot - INFO - Checking activity for Quaille (groups: sysop, bureaucrat)
+2026-07-02 02:54:45,289 - ActivityBot - INFO - Quaille has been inactive for 46 days (threshold: 90)
+2026-07-02 02:54:45,289 - ActivityBot - INFO - Checking activity for SaoMikoto (groups: sysop, bureaucrat)
+2026-07-02 02:54:46,890 - ActivityBot - INFO - SaoMikoto has been inactive for 3 days (threshold: 90)
+2026-07-02 02:54:46,890 - ActivityBot - INFO - Checking activity for Sharky (groups: sysop)
+2026-07-02 02:54:48,488 - ActivityBot - INFO - Sharky has been inactive for 120 days, exceeding rights removal threshold
+2026-07-02 02:54:52,098 - ActivityBot - INFO - Successfully removed rights ['sysop'] from Sharky
+2026-07-02 02:54:53,056 - ActivityBot - INFO - Successfully sent message to User talk:Sharky
+2026-07-02 02:54:53,056 - ActivityBot - INFO - Checking activity for Sidrat al-Muntaha (groups: sysop, bureaucrat)
+2026-07-02 02:54:54,653 - ActivityBot - INFO - Sidrat al-Muntaha has been inactive for 26 days (threshold: 90)
+2026-07-02 02:54:54,654 - ActivityBot - INFO - Checking activity for SimpleObjects-testwiki (groups: sysop, bureaucrat)
+2026-07-02 02:54:56,254 - ActivityBot - INFO - SimpleObjects-testwiki has been inactive for 60 days (threshold: 90)
+2026-07-02 02:54:56,254 - ActivityBot - INFO - Checking activity for SteveWyntontje (groups: sysop)
+2026-07-02 02:54:57,849 - ActivityBot - INFO - SteveWyntontje has been inactive for 44 days (threshold: 90)
+2026-07-02 02:54:57,849 - ActivityBot - INFO - Checking activity for Tester (groups: sysop, bureaucrat)
+2026-07-02 02:54:59,444 - ActivityBot - INFO - Tester has been inactive for 37 days (threshold: 90)
+2026-07-02 02:54:59,444 - ActivityBot - INFO - Checking activity for Tester und Übersetzer (groups: sysop)
+2026-07-02 02:55:01,041 - ActivityBot - INFO - Tester und Übersetzer has been inactive for 62 days (threshold: 90)
+2026-07-02 02:55:01,041 - ActivityBot - INFO - Checking activity for Whyiseverythingalreadyused (groups: sysop, bureaucrat)
+2026-07-02 02:55:02,637 - ActivityBot - INFO - Whyiseverythingalreadyused has been inactive for 1 days (threshold: 90)
+2026-07-02 02:55:02,637 - ActivityBot - INFO - Checking activity for Willbill6272 (groups: sysop, bureaucrat)
+2026-07-02 02:55:04,236 - ActivityBot - INFO - Willbill6272 has been inactive for 9 days (threshold: 90)
+2026-07-02 02:55:04,236 - ActivityBot - INFO - Checking activity for Xzkdeng (groups: sysop)
+2026-07-02 02:55:05,833 - ActivityBot - INFO - Xzkdeng has been inactive for 37 days (threshold: 90)
+2026-07-02 02:55:05,833 - ActivityBot - INFO - Checking activity for Yuki Shiromita (groups: sysop, bureaucrat)
+2026-07-02 02:55:07,230 - ActivityBot - INFO - Yuki Shiromita has been inactive for 15 days (threshold: 90)
+2026-07-02 02:55:08,035 - ActivityBot - ERROR - Error parsing report date from line '== Activity Report: 2025-12-20 == ': unconverted data remains:  
+2026-07-02 02:55:08,035 - ActivityBot - ERROR - Error parsing report date from line '== Activity Report: 2025-12-27 == ': unconverted data remains:  
+2026-07-02 02:55:08,035 - ActivityBot - INFO - Removing old report from 2026-05-03 (60 days old)
+2026-07-02 02:55:08,035 - ActivityBot - INFO - Removing old report from 2026-05-04 (59 days old)
+2026-07-02 02:55:08,035 - ActivityBot - INFO - Removing old report from 2026-05-11 (52 days old)
+2026-07-02 02:55:08,035 - ActivityBot - INFO - Removing old report from 2026-05-13 (50 days old)
+2026-07-02 02:55:08,035 - ActivityBot - INFO - Removing old report from 2026-05-14 (49 days old)
+2026-07-02 02:55:08,035 - ActivityBot - INFO - Removing old report from 2026-05-16 (47 days old)
+2026-07-02 02:55:09,167 - ActivityBot - INFO - Successfully updated Test Wiki:Activity reports page
+2026-07-02 02:55:09,168 - ActivityBot - INFO - ActivityBot execution completed. Actions taken: 6 rights removals
