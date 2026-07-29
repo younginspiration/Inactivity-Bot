@@ -4324,3 +4324,67 @@
 2026-07-28 02:09:35,853 - ActivityBot - INFO - Xzkdeng has been inactive for 63 days (threshold: 90)
 2026-07-28 02:09:35,854 - ActivityBot - INFO - No actions to report today
 2026-07-28 02:09:35,854 - ActivityBot - INFO - ActivityBot execution completed. Actions taken: 0 rights removals
+2026-07-29 02:12:54,073 - ActivityBot - INFO - Starting ActivityBot execution
+2026-07-29 02:12:54,888 - ActivityBot - INFO - Obtained login token
+2026-07-29 02:12:55,557 - ActivityBot - INFO - Successfully logged in as Inactivity Bot
+2026-07-29 02:12:56,177 - ActivityBot - INFO - Obtained csrf token
+2026-07-29 02:12:56,788 - ActivityBot - INFO - Obtained userrights token
+2026-07-29 02:12:57,407 - ActivityBot - INFO - Found 26 users in group 'sysop' (after exclusions)
+2026-07-29 02:12:58,694 - ActivityBot - INFO - Found 19 users in group 'bureaucrat' (after exclusions)
+2026-07-29 02:12:58,694 - ActivityBot - INFO - Checking activity for AM (groups: sysop, bureaucrat)
+2026-07-29 02:13:00,116 - ActivityBot - INFO - AM has been inactive for 1 days (threshold: 90)
+2026-07-29 02:13:00,116 - ActivityBot - INFO - Checking activity for AlPaD (groups: sysop, bureaucrat)
+2026-07-29 02:13:01,365 - ActivityBot - INFO - AlPaD has been inactive for 23 days (threshold: 90)
+2026-07-29 02:13:01,365 - ActivityBot - INFO - Checking activity for Ameisenigel (groups: sysop, bureaucrat)
+2026-07-29 02:13:02,622 - ActivityBot - INFO - Ameisenigel has been inactive for 0 days (threshold: 90)
+2026-07-29 02:13:02,622 - ActivityBot - INFO - Checking activity for Bosco (groups: sysop, bureaucrat)
+2026-07-29 02:13:03,881 - ActivityBot - INFO - Bosco has been inactive for 4 days (threshold: 90)
+2026-07-29 02:13:03,882 - ActivityBot - INFO - Checking activity for Bosco-bot (groups: sysop)
+2026-07-29 02:13:05,133 - ActivityBot - INFO - Bosco-bot has been inactive for 21 days (threshold: 90)
+2026-07-29 02:13:05,133 - ActivityBot - INFO - Checking activity for Codename Noreste (groups: sysop, bureaucrat)
+2026-07-29 02:13:06,456 - ActivityBot - INFO - Codename Noreste has been inactive for 19 days (threshold: 90)
+2026-07-29 02:13:06,456 - ActivityBot - INFO - Checking activity for DarkMatterMan4500 (groups: sysop)
+2026-07-29 02:13:07,728 - ActivityBot - INFO - DarkMatterMan4500 has been inactive for 2 days (threshold: 90)
+2026-07-29 02:13:07,728 - ActivityBot - INFO - Checking activity for ElectroTiel (groups: sysop)
+2026-07-29 02:13:08,974 - ActivityBot - INFO - ElectroTiel has been inactive for 0 days (threshold: 90)
+2026-07-29 02:13:08,974 - ActivityBot - INFO - Checking activity for Euphoria (groups: sysop, bureaucrat)
+2026-07-29 02:13:10,222 - ActivityBot - INFO - Euphoria has been inactive for 14 days (threshold: 90)
+2026-07-29 02:13:10,222 - ActivityBot - INFO - Checking activity for Inactivity Bot (groups: sysop, bureaucrat)
+2026-07-29 02:13:10,222 - ActivityBot - INFO - Skipping excluded user: Inactivity Bot
+2026-07-29 02:13:10,222 - ActivityBot - INFO - Checking activity for Kazrok4545 (groups: sysop, bureaucrat)
+2026-07-29 02:13:11,491 - ActivityBot - INFO - Kazrok4545 has been inactive for 44 days (threshold: 90)
+2026-07-29 02:13:11,492 - ActivityBot - INFO - Checking activity for Kengkong1 (groups: sysop)
+2026-07-29 02:13:12,726 - ActivityBot - INFO - Kengkong1 has been inactive for 88 days (threshold: 90)
+2026-07-29 02:13:12,726 - ActivityBot - INFO - Checking activity for MrJaroslavik (groups: sysop, bureaucrat)
+2026-07-29 02:13:13,971 - ActivityBot - INFO - MrJaroslavik has been inactive for 90 days, exceeding rights removal threshold
+2026-07-29 02:13:18,880 - ActivityBot - INFO - Successfully removed rights ['sysop', 'bureaucrat'] from MrJaroslavik
+2026-07-29 02:13:19,795 - ActivityBot - INFO - Successfully sent message to User talk:MrJaroslavik
+2026-07-29 02:13:19,795 - ActivityBot - INFO - Checking activity for Peterxy (groups: sysop, bureaucrat)
+2026-07-29 02:13:21,061 - ActivityBot - INFO - Peterxy has been inactive for 7 days (threshold: 90)
+2026-07-29 02:13:21,061 - ActivityBot - INFO - Checking activity for Quaille (groups: sysop, bureaucrat)
+2026-07-29 02:13:22,327 - ActivityBot - INFO - Quaille has been inactive for 73 days (threshold: 90)
+2026-07-29 02:13:22,328 - ActivityBot - INFO - Checking activity for S (groups: sysop, bureaucrat)
+2026-07-29 02:13:23,568 - ActivityBot - INFO - S has been inactive for 12 days (threshold: 90)
+2026-07-29 02:13:23,568 - ActivityBot - INFO - Checking activity for SaoMikoto (groups: sysop, bureaucrat)
+2026-07-29 02:13:24,815 - ActivityBot - INFO - SaoMikoto has been inactive for 30 days (threshold: 90)
+2026-07-29 02:13:24,815 - ActivityBot - INFO - Checking activity for Shabe (groups: sysop, bureaucrat)
+2026-07-29 02:13:26,059 - ActivityBot - INFO - Shabe has been inactive for 4 days (threshold: 90)
+2026-07-29 02:13:26,059 - ActivityBot - INFO - Checking activity for Sidrat al-Muntaha (groups: sysop, bureaucrat)
+2026-07-29 02:13:27,304 - ActivityBot - INFO - Sidrat al-Muntaha has been inactive for 25 days (threshold: 90)
+2026-07-29 02:13:27,305 - ActivityBot - INFO - Checking activity for SimpleObjects-testwiki (groups: sysop, bureaucrat)
+2026-07-29 02:13:28,541 - ActivityBot - INFO - SimpleObjects-testwiki has been inactive for 4 days (threshold: 90)
+2026-07-29 02:13:28,541 - ActivityBot - INFO - Checking activity for SteveWyntontje (groups: sysop)
+2026-07-29 02:13:31,131 - ActivityBot - INFO - SteveWyntontje has been inactive for 71 days (threshold: 90)
+2026-07-29 02:13:31,131 - ActivityBot - INFO - Checking activity for Tester (groups: sysop, bureaucrat)
+2026-07-29 02:13:32,379 - ActivityBot - INFO - Tester has been inactive for 64 days (threshold: 90)
+2026-07-29 02:13:32,379 - ActivityBot - INFO - Checking activity for Tester und Übersetzer (groups: sysop)
+2026-07-29 02:13:33,619 - ActivityBot - INFO - Tester und Übersetzer has been inactive for 89 days (threshold: 90)
+2026-07-29 02:13:33,619 - ActivityBot - INFO - Checking activity for Whyiseverythingalreadyused (groups: sysop, bureaucrat)
+2026-07-29 02:13:34,854 - ActivityBot - INFO - Whyiseverythingalreadyused has been inactive for 2 days (threshold: 90)
+2026-07-29 02:13:34,854 - ActivityBot - INFO - Checking activity for Willbill6272 (groups: sysop, bureaucrat)
+2026-07-29 02:13:36,093 - ActivityBot - INFO - Willbill6272 has been inactive for 7 days (threshold: 90)
+2026-07-29 02:13:36,093 - ActivityBot - INFO - Checking activity for Xzkdeng (groups: sysop)
+2026-07-29 02:13:37,329 - ActivityBot - INFO - Xzkdeng has been inactive for 64 days (threshold: 90)
+2026-07-29 02:13:37,957 - ActivityBot - INFO - Removing old report from 2026-07-02 (27 days old)
+2026-07-29 02:13:38,849 - ActivityBot - INFO - Successfully updated Test Wiki:Activity reports page
+2026-07-29 02:13:38,849 - ActivityBot - INFO - ActivityBot execution completed. Actions taken: 1 rights removals
