@@ -5231,3 +5231,7 @@
 2026-08-14 01:38:37,902 - ActivityBot - INFO - Xzkdeng has been inactive for 80 days (threshold: 90)
 2026-08-14 01:38:37,902 - ActivityBot - INFO - No actions to report today
 2026-08-14 01:38:37,902 - ActivityBot - INFO - ActivityBot execution completed. Actions taken: 0 rights removals
+2026-08-15 01:00:02,892 - ActivityBot - INFO - Starting ActivityBot execution
+2026-08-15 01:01:10,383 - ActivityBot - ERROR - API request error: 522 Server Error: <none> for url: https://testwiki.wiki/api.php?action=query&meta=tokens&format=json&type=login
+2026-08-15 01:01:10,383 - ActivityBot - ERROR - Failed to get login token
+2026-08-15 01:01:10,383 - ActivityBot - ERROR - Failed to login, aborting execution
