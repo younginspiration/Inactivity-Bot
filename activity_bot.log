@@ -8176,3 +8176,7 @@
 2026-10-07 04:06:31,158 - ActivityBot - INFO - Willbill6272 has been inactive for 9 days (threshold: 90)
 2026-10-07 04:06:31,158 - ActivityBot - INFO - No actions to report today
 2026-10-07 04:06:31,159 - ActivityBot - INFO - ActivityBot execution completed. Actions taken: 0 rights removals
+2026-10-08 04:18:16,278 - ActivityBot - INFO - Starting ActivityBot execution
+2026-10-08 04:18:16,861 - ActivityBot - ERROR - API request error: 526 Server Error: <none> for url: https://testwiki.wiki/api.php?action=query&meta=tokens&format=json&type=login
+2026-10-08 04:18:16,861 - ActivityBot - ERROR - Failed to get login token
+2026-10-08 04:18:16,861 - ActivityBot - ERROR - Failed to login, aborting execution
