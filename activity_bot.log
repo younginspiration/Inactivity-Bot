@@ -9993,3 +9993,61 @@
 2026-11-15 04:38:51,798 - ActivityBot - ERROR - API request error: 403 Client Error: Forbidden for url: https://testwiki.wiki/api.php?action=query&meta=tokens&format=json&type=login
 2026-11-15 04:38:51,798 - ActivityBot - ERROR - Failed to get login token
 2026-11-15 04:38:51,798 - ActivityBot - ERROR - Failed to login, aborting execution
+2026-11-16 04:34:30,649 - ActivityBot - INFO - Starting ActivityBot execution
+2026-11-16 04:34:31,607 - ActivityBot - INFO - Obtained login token
+2026-11-16 04:34:32,333 - ActivityBot - INFO - Successfully logged in as Inactivity Bot
+2026-11-16 04:34:33,086 - ActivityBot - INFO - Obtained csrf token
+2026-11-16 04:34:33,818 - ActivityBot - INFO - Obtained userrights token
+2026-11-16 04:34:34,514 - ActivityBot - INFO - Found 23 users in group 'sysop' (after exclusions)
+2026-11-16 04:34:35,258 - ActivityBot - INFO - Found 19 users in group 'bureaucrat' (after exclusions)
+2026-11-16 04:34:35,258 - ActivityBot - INFO - Checking activity for .sh1eldo7 (groups: sysop, bureaucrat)
+2026-11-16 04:34:36,724 - ActivityBot - INFO - .sh1eldo7 has been inactive for 50 days (threshold: 90)
+2026-11-16 04:34:36,724 - ActivityBot - INFO - Checking activity for AM (groups: sysop, bureaucrat)
+2026-11-16 04:34:38,131 - ActivityBot - INFO - AM has been inactive for 4 days (threshold: 90)
+2026-11-16 04:34:38,131 - ActivityBot - INFO - Checking activity for AlPaD (groups: sysop, bureaucrat)
+2026-11-16 04:34:39,555 - ActivityBot - INFO - AlPaD has been inactive for 8 days (threshold: 90)
+2026-11-16 04:34:39,555 - ActivityBot - INFO - Checking activity for Ameisenigel (groups: sysop, bureaucrat)
+2026-11-16 04:34:40,955 - ActivityBot - INFO - Ameisenigel has been inactive for 18 days (threshold: 90)
+2026-11-16 04:34:40,955 - ActivityBot - INFO - Checking activity for Bosco (groups: sysop, bureaucrat)
+2026-11-16 04:34:42,340 - ActivityBot - INFO - Bosco has been inactive for 0 days (threshold: 90)
+2026-11-16 04:34:42,340 - ActivityBot - INFO - Checking activity for Bosco-bot (groups: sysop)
+2026-11-16 04:34:43,709 - ActivityBot - INFO - Bosco-bot has been inactive for 12 days (threshold: 90)
+2026-11-16 04:34:43,710 - ActivityBot - INFO - Checking activity for Codename Noreste (groups: sysop, bureaucrat)
+2026-11-16 04:34:45,088 - ActivityBot - INFO - Codename Noreste has been inactive for 10 days (threshold: 90)
+2026-11-16 04:34:45,088 - ActivityBot - INFO - Checking activity for DarkMatterMan4500 (groups: sysop)
+2026-11-16 04:34:46,488 - ActivityBot - INFO - DarkMatterMan4500 has been inactive for 35 days (threshold: 90)
+2026-11-16 04:34:46,488 - ActivityBot - INFO - Checking activity for Dmehus (groups: sysop, bureaucrat)
+2026-11-16 04:34:47,881 - ActivityBot - INFO - Dmehus has been inactive for 89 days (threshold: 90)
+2026-11-16 04:34:47,881 - ActivityBot - INFO - Checking activity for Dravya Shah (groups: sysop, bureaucrat)
+2026-11-16 04:34:49,289 - ActivityBot - INFO - Dravya Shah has been inactive for 39 days (threshold: 90)
+2026-11-16 04:34:49,289 - ActivityBot - INFO - Checking activity for ElectroTiel (groups: sysop)
+2026-11-16 04:34:50,663 - ActivityBot - INFO - ElectroTiel has been inactive for 58 days (threshold: 90)
+2026-11-16 04:34:50,663 - ActivityBot - INFO - Checking activity for Euphoria (groups: sysop, bureaucrat)
+2026-11-16 04:34:52,074 - ActivityBot - INFO - Euphoria has been inactive for 67 days (threshold: 90)
+2026-11-16 04:34:52,074 - ActivityBot - INFO - Checking activity for Inactivity Bot (groups: sysop, bureaucrat)
+2026-11-16 04:34:52,074 - ActivityBot - INFO - Skipping excluded user: Inactivity Bot
+2026-11-16 04:34:52,074 - ActivityBot - INFO - Checking activity for Kazrok4545 (groups: sysop, bureaucrat)
+2026-11-16 04:34:53,525 - ActivityBot - INFO - Kazrok4545 has been inactive for 57 days (threshold: 90)
+2026-11-16 04:34:53,525 - ActivityBot - INFO - Checking activity for NguoiDungKhongDinhDanh (groups: sysop, bureaucrat)
+2026-11-16 04:34:54,928 - ActivityBot - INFO - NguoiDungKhongDinhDanh has been inactive for 60 days (threshold: 90)
+2026-11-16 04:34:54,928 - ActivityBot - INFO - Checking activity for Peterxy (groups: sysop, bureaucrat)
+2026-11-16 04:34:56,322 - ActivityBot - INFO - Peterxy has been inactive for 2 days (threshold: 90)
+2026-11-16 04:34:56,322 - ActivityBot - INFO - Checking activity for Quaille (groups: sysop, bureaucrat)
+2026-11-16 04:34:57,696 - ActivityBot - INFO - Quaille has been inactive for 83 days (threshold: 90)
+2026-11-16 04:34:57,696 - ActivityBot - INFO - Checking activity for S (groups: sysop, bureaucrat)
+2026-11-16 04:34:59,092 - ActivityBot - INFO - S has been inactive for 91 days, exceeding rights removal threshold
+2026-11-16 04:35:02,333 - ActivityBot - INFO - Successfully removed rights ['sysop', 'bureaucrat'] from S
+2026-11-16 04:35:03,324 - ActivityBot - INFO - Successfully sent message to User talk:S
+2026-11-16 04:35:03,324 - ActivityBot - INFO - Checking activity for Shabe (groups: sysop, bureaucrat)
+2026-11-16 04:35:04,605 - ActivityBot - INFO - Shabe has been inactive for 4 days (threshold: 90)
+2026-11-16 04:35:04,605 - ActivityBot - INFO - Checking activity for Sidrat al-Muntaha (groups: sysop, bureaucrat)
+2026-11-16 04:35:06,031 - ActivityBot - INFO - Sidrat al-Muntaha has been inactive for 43 days (threshold: 90)
+2026-11-16 04:35:06,031 - ActivityBot - INFO - Checking activity for Taratarussia (groups: sysop)
+2026-11-16 04:35:07,462 - ActivityBot - INFO - Taratarussia has been inactive for 84 days (threshold: 90)
+2026-11-16 04:35:07,462 - ActivityBot - INFO - Checking activity for Whyiseverythingalreadyused (groups: sysop, bureaucrat)
+2026-11-16 04:35:08,915 - ActivityBot - INFO - Whyiseverythingalreadyused has been inactive for 59 days (threshold: 90)
+2026-11-16 04:35:08,915 - ActivityBot - INFO - Checking activity for Willbill6272 (groups: sysop, bureaucrat)
+2026-11-16 04:35:10,182 - ActivityBot - INFO - Willbill6272 has been inactive for 49 days (threshold: 90)
+2026-11-16 04:35:10,892 - ActivityBot - INFO - Removing old report from 2026-10-26 (21 days old)
+2026-11-16 04:35:12,004 - ActivityBot - INFO - Successfully updated Test Wiki:Activity reports page
+2026-11-16 04:35:12,004 - ActivityBot - INFO - ActivityBot execution completed. Actions taken: 1 rights removals
