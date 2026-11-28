@@ -10610,3 +10610,7 @@
 2026-11-27 06:32:35,139 - ActivityBot - INFO - Willbill6272 has been inactive for 60 days (threshold: 90)
 2026-11-27 06:32:35,139 - ActivityBot - INFO - No actions to report today
 2026-11-27 06:32:35,139 - ActivityBot - INFO - ActivityBot execution completed. Actions taken: 0 rights removals
+2026-11-28 06:06:44,811 - ActivityBot - INFO - Starting ActivityBot execution
+2026-11-28 06:06:45,354 - ActivityBot - ERROR - API request error: 403 Client Error: Forbidden for url: https://testwiki.wiki/api.php?action=query&meta=tokens&format=json&type=login
+2026-11-28 06:06:45,355 - ActivityBot - ERROR - Failed to get login token
+2026-11-28 06:06:45,355 - ActivityBot - ERROR - Failed to login, aborting execution
